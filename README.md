@@ -1,148 +1,138 @@
-**My software career came to an end on 1 July 2022 and with it ended active development of JS9. Please plan accordingly. Eric**
+# JS9MuV1 Lite
 
-**Security vulnerability (12/13/2024): a bug in the JS9 Helper, found during a Smithsonian Institution security audit, could allow an attacker to run arbitrary code using the id of the helper. (An attack would be evident in the helper log.) Please install the latest version of JS9, or at least the latest version of js9Helper.js.**
+JS9MuV1 Lite is a deployable, browser-based FITS viewer for astronomical
+quick-look, image inspection, regions, WCS-aware measurements, and aperture
+photometry. It is built from the [JS9](https://github.com/ericmandel/js9)
+runtime and keeps the public JS9 API compatible while providing a modern,
+theme-aware interface and application integration layer.
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6675771.svg)](https://doi.org/10.5281/zenodo.6675771)
+**Release:** 1.4.20 · **JS9 runtime:** 3.9 · **License:** MIT
 
-[![DeepScan grade](https://deepscan.io/api/teams/12940/projects/15985/branches/329797/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=12940&pid=15985&bid=329797)
+> This is an independently maintained JS9MuV1 distribution, not an official
+> release of the upstream JS9 project. Upstream JS9 development ended in 2022;
+> see [Upstream attribution](#upstream-attribution-and-security) below.
 
-[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/espadrine.svg?style=social&label=Follow%20%40astrosoftware)](https://twitter.com/astrosoftware)
+## What it is for
 
-JS9: astronomical image display everywhere
-==========================================
+- Open local or remote FITS images, cubes, tables, and multi-extension files.
+- Inspect data with pan, zoom, colormaps, scale transforms, zscale, and a
+  display-bound colorbar.
+- Draw and persist image regions; use a source aperture plus sky annulus for
+  scientific photometry.
+- Read celestial coordinates from FITS WCS and show pixel values, angular
+  scales, and region measurements.
+- Embed one or more viewers in ordinary HTML, Vue 3, or any framework that can
+  host a Web Component.
+- Integrate an observatory quick-look stream using explicit load, retry,
+  status, error, and measurement APIs.
 
-![JS9](images/js9Readme.png)
+## How it works
 
-What does it do?
-----------------
+The browser loads three layers:
 
-  - display FITS images, binary tables, data cubes, and multi-extension files
-  - colormaps, scaling, pan, zoom, binning, blending, print, export ...
-  - region support: create, manipulate, import, export, ...
-  - drag and drop images, regions, catalogs
-  - server-side and local analysis using the JS9 public API
-  - control JS9 using scripts from the Linux shell or Python
-  - runs on Macs, Linux, Windows, iPads, iPhones, ...
-  - runs as a Desktop app in all modern browsers
-  - utilizes WebAssembly (FITS processing at near native speed!)
+1. **Viewer shell** — `js9.css`, `js9support.min.js`, and `js9.min.js` create
+   the display, menus, regions, WCS interaction, and public API.
+2. **FITS engine** — `astroemw.wasm` performs FITS decoding and numerical work
+   in WebAssembly. Keep it in the same deployed directory as the JS9 runtime.
+3. **Optional integration layer** — `js9plugins.js` supplies analysis panels;
+   the Web Component and Vue wrapper create isolated display instances and
+   forward application-level events.
 
-How can I try it out?
----------------------
+The image canvas is separate from interface chrome. Themes change menus,
+dialogs, controls, and panels only; they do not alter FITS pixels or the
+scientific values returned by the API.
 
-Go to [JS9 web site](https://js9.si.edu) and drag a
-[FITS](https://fits.gsfc.nasa.gov/) data file onto the JS9 display:
+For annular photometry, the inner disk is the source aperture and the annulus
+between the inner and outer radii estimates the background. The Region Stats
+panel reports robust-background-subtracted flux, uncertainty, S/N, FWHM, and
+instrumental/calibrated magnitudes when calibration values are supplied. The
+equations and conventions are documented in [Photometry reference](help/photometry.html).
 
-    https://js9.si.edu
+## Start locally
 
-You can even specify a remote FITS file and associated image display parameters
-as part of the URL:
+Serve this directory over HTTP; do not rely on `file://` for WebAssembly assets:
 
-    https://js9.si.edu/js9/js9.html?url=https://hea-www.cfa.harvard.edu/~eric/coma.fits.gz&colormap=cool
+```sh
+python3 -m http.server 8123
+```
 
-The JS9 web site also contains on-line documentation, demos, and
-release downloads.
+Then open <http://127.0.0.1:8123/>. A minimal direct entry point is
+<http://127.0.0.1:8123/js9.html>.
 
+## Embed in a web page
 
-To install or not to install ...
---------------------------------
+```html
+<link rel="stylesheet" href="/js9/js9support.css">
+<link rel="stylesheet" href="/js9/js9.css">
+<link rel="stylesheet" href="/js9/web-component/js9-viewer-element.css">
 
-For many users, there is no need to install JS9: simply use the [JS9 web
-site](https://js9.si.edu) to display your data. You can even upload your
-FITS files to the web site and run our server-side analysis.
+<script src="/js9/js9support.min.js"></script>
+<script src="/js9/js9.min.js"></script>
+<script src="/js9/js9plugins.js"></script>
+<script src="/js9/web-component/js9-viewer-element.js"></script>
 
-Installing JS9 allows you to create your own web pages, tailor site
-parameters, and add your own local and server-based analysis tasks. Grab the
-latest version from [JS9 on GitHub](https://github.com/ericmandel/js9):
+<js9-viewer display-id="science" width="900" height="600"
+            src="/data/observation.fits"></js9-viewer>
+```
 
-    git clone https://github.com/ericmandel/js9
+Every viewer needs a unique `display-id`. The component emits `js9-ready`,
+`js9-load`, `js9-status`, and `js9-error`; call `load()`, `loadFullImage()`,
+`zoomToFit()`, or `resize()` on the element for application control.
 
-Load a local page into your browser:
+## Integration API
 
-    file:///path/to/js9/js9.html
+The public JS9 API remains available through `window.JS9`. JS9MuV1 additionally
+provides focused integration helpers:
 
-(NB: Chrome needs to run with the --allow-file-access-from-files switch to use
-the file URI.)
+- `JS9.LoadObservationPreview()` / `JS9.GetObservationPreviewStatus()` for
+  completed-file gating, retry handling, and newest-frame quick look.
+- `JS9.GetViewerState()` for serializable display metadata and visual state.
+- `JS9.ExportRegionsJSON()` / `JS9.ImportRegionsJSON()` for region persistence.
+- `JS9.Subscribe()` / `JS9.Unsubscribe()` for view and region events.
+- `JS9.GetAnnulusPhotometry()` / `JS9.GetAllAnnulusPhotometry()` for stable,
+  versioned source-plus-background measurements.
 
-For Desktop use, install [Electron.js](https://www.electronjs.org/)
-and use the *js9* script to start the Desktop app and load an image:
+The returned results always include an explicit success or error state; do not
+parse panel text or browser dialogs in an observatory application.
 
-    js9 -a ~/data/m13.fits
+## Vue 3
 
-For more advanced support (web-based support, support for handling large files),
-build the JS9 helper and install JS9 in a web directory:
+Use `vue/JS9Viewer.vue` as the Vue wrapper. It exposes `displayId`, `src`,
+`width`, `height`, and `colorbar` props, as well as its underlying viewer API.
+The wrapper is optional: React, Angular, Svelte, and plain JavaScript can use
+the same Web Component directly.
 
-    # configure location to install the JS9 web files,
-    # where to find cfitsio library and include files,
-    # where to install programs and scripts,
-    # what sort of helper to build:
-    ./configure --with-webdir=[path_to_web_install] \
-                --with-cfitsio=[path_to_cfitsio]    \
-                --prefix=[path_to_prog_install]     \
-                --with-helper=nodejs
+## Documentation and checks
 
-    # the usual ...
-    make
-    make install
+| Resource | Purpose |
+| --- | --- |
+| [Chinese deployment guide](%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97.md) | Installation, UI use, framework integration, and API examples |
+| [Photometry reference](help/photometry.html) | Scientific photometry method and equations |
+| [Release notes](RELEASE_NOTES.md) | Changes in each JS9MuV1 Lite release |
+| [Version manifest](VERSION.json) | Machine-readable release and package contents |
+| [Self-check](selfcheck.html) | Browser dependency and runtime diagnostic page |
+| [Vue wrapper README](vue/README.md) | Vue-specific setup |
+| [Web Component README](web-component/README.md) | Framework-neutral component setup |
 
-    # start helper
-    cd path_to_web_install
-    # in the bash shell:
-    node js9Helper.js 1>~/logs/js9node.log 2>&1 &
-    # or, in the tcsh shell:
-    node js9Helper.js >& ~/logs/js9node.log &
+## Deployment notes
 
-What about scripting?
----------------------
+- Keep `astroemw.wasm` beside the runtime files and serve it with the
+  `application/wasm` MIME type.
+- Remote FITS sources require a server that permits browser CORS access.
+- Use HTTPS in production; the browser’s normal mixed-content restrictions
+  apply to HTTP image URLs.
+- The package intentionally excludes demos, tests, build sources, Node
+  dependencies, and the Vue example application. It includes the runtime,
+  scientific plugins, help, Web Component, Vue wrapper, and documentation.
 
-The *js9* script allows you to control a JS9 web page from the Linux
-command line using the JS9 Public API (scripting requires installation of
-JS9 and either [node.js](https://nodejs.org/) or
-[Electron.js](https://www.electronjs.org/)):
+## Upstream attribution and security
 
-    js9 Load chandra.fits '{"scale":"log","colormap":"red","contrast":5.78,"bias":0.15}'
-    js9 Load spitzer.fits '{"scale":"log","colormap":"blue","contrast":6.3,"bias":0.54}'
-    js9 ReprojectData chandra.fits
+JS9MuV1 derives from JS9 by Eric Mandel and Alexey Vikhlinin at the Center for
+Astrophysics | Harvard & Smithsonian. JS9 is distributed under the MIT License;
+see [LICENSE](LICENSE). Consult the upstream [JS9 repository](https://github.com/ericmandel/js9)
+for its original history and acknowledgements.
 
-Python users can install [pyjs9](https://github.com/ericmandel/pyjs9):
-
-    git clone https://github.com/ericmandel/pyjs9
-    ...
-    import pyjs9
-    j = pyjs9.JS9()
-    j.Load('chandra.fits', '{"scale":"log","colormap":"red","contrast":5.78,"bias":0.15}')
-    j.Load('spitzer.fits', '{"scale":"log","colormap":"blue","contrast":6.3,"bias":0.54}')
-    j.ReprojectData('chandra.fits')
-
-What's the license?
--------------------
-
-JS9 is distributed under the terms of The MIT License.
-
-What's the recent release history?
-----------------------------------
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6675771.svg)](https://doi.org/10.5281/zenodo.6675771)  __v3.8.0__ &nbsp; (06/21/2022)
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6554571.svg)](https://doi.org/10.5281/zenodo.6554571)  __v3.7.0__ &nbsp; (05/16/2022)
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5815246.svg)](https://doi.org/10.5281/zenodo.5815246)  __v3.6.2__ &nbsp; (01/03/2022)
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5205774.svg)](https://doi.org/10.5281/zenodo.5205774)  __v3.6.1__ &nbsp; (08/16/2021)
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5148424.svg)](https://doi.org/10.5281/zenodo.5148424)  __v3.6.0__ &nbsp; (07/30/2021)
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4891274.svg)](https://doi.org/10.5281/zenodo.4891274)  __v3.5.0__ &nbsp; (06/01/2021)
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4739157.svg)](https://doi.org/10.5281/zenodo.4739157)  __v3.4.0__ &nbsp; (05/05/2021)
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4322843.svg)](https://doi.org/10.5281/zenodo.4322843) __v3.3.1__ &nbsp; (12/15/2020)
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4320789.svg)](https://doi.org/10.5281/zenodo.4320789) __v3.3.0__ &nbsp; (12/14/2020)
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4252893.svg)](https://doi.org/10.5281/zenodo.4252893) __v3.2.0__ &nbsp; (11/06/2020)
-
-Who's responsible?
-------------------
-
-Eric Mandel, Alexey Vikhlinin
-
-Center for Astrophysics | Harvard & Smithsonian
+The upstream project reported a JS9 Helper security issue in December 2024. The
+Lite browser deployment does not include `js9Helper.js`. If you separately use
+the helper or an older full JS9 installation, update it from upstream before
+exposing it to a network.

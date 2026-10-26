@@ -1,3 +1,14 @@
+# JS9MuV1 Lite 1.4.20
+
+## Project README refresh
+
+- Replaced the inherited upstream README with a JS9MuV1-oriented overview of
+  the deployment package, browser/WebAssembly architecture, annular
+  photometry, framework integration, operational API, documentation, and
+  deployment requirements.
+- Preserved clear upstream JS9 attribution, the MIT-license reference, and the
+  security guidance for anyone who separately deploys the optional JS9 Helper.
+
 # JS9MuV1 Lite 1.4.19
 
 ## Touch-first interaction
