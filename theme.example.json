@@ -1,6 +1,8 @@
 {
   "theme": "midnight",
   "accent": "#38bdf8",
+  "density": "standard",
+  "minimal": false,
   "menuBackground": "#172554",
   "menuText": "#e0f2fe",
   "menuFontSize": 14,

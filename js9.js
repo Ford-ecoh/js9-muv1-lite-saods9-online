@@ -234,6 +234,7 @@ JS9.globalOpts = {
 	"M-e": "edit selected region(s)",
 	i: "refresh image",
 	I: "display full image",
+	z: "apply zscale clipping limits",
 	"M-i": "display selected cutouts",
 	"M-k": "toggle keyboard actions plugin",
 	l: "toggle active shape layers",

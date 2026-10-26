@@ -1,3 +1,14 @@
+# JS9MuV1 Lite 1.4.21
+
+## Final UI refinements
+
+- Added per-display Standard and Compact density choices to Customize appearance.
+- Added Quick-look mode, which keeps the image, toolbar, and display-bound
+  Colorbar while hiding the menu and status bars.
+- Added a concise shortcut reference to Customize appearance and bound `Z` to
+  zscale; existing open, full-image, zoom, and reset-zoom shortcuts are shown
+  alongside it.
+
 # JS9MuV1 Lite 1.4.20
 
 ## Project README refresh
