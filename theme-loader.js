@@ -18,7 +18,11 @@
     function applyWhenReady(options, attempt){
         if( window.JS9 && typeof window.JS9.SetInterface === "function" ){
             try{
-                window.JS9.SetInterface(options, {display});
+                if( options.ui && typeof window.JS9.SetUIConfig === "function" ){
+                    window.JS9.SetUIConfig(Object.assign({}, options, options.ui, {ui: undefined}), {display});
+                } else {
+                    window.JS9.SetInterface(options, {display});
+                }
                 window.dispatchEvent(new CustomEvent("js9-theme-ready", {detail: {display, options}}));
             } catch(error){
                 window.dispatchEvent(new CustomEvent("js9-theme-error", {detail: {display, error}}));

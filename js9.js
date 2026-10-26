@@ -10154,6 +10154,12 @@ JS9.Display.prototype.displayPlugin = function(plugin){
 	    title += sprintf(JS9.IDFMT, this.id);
 	    // create the light window
 	    win = JS9.lightWin(did, "div", oid, title, s);
+	    // Floating plugin windows live outside normal viewer chrome. Tag and
+	    // style them with their owning display so simultaneous viewers can keep
+	    // independent UIConfig palettes.
+	    if( JS9.Customize && JS9.Customize.applyFloatingWindow ){
+		JS9.Customize.applyFloatingWindow(this, did);
+	    }
 	    // find inner div in the light window
 	    pdiv = $(`#${did} #${iid}`);
 	    // create the plugin inside the inner div

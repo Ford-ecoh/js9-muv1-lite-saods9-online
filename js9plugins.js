@@ -4245,7 +4245,10 @@ JS9.Customize.NAME = "Customize";
 JS9.Customize.WIDTH = 440;
 JS9.Customize.HEIGHT = 660;
 JS9.Customize.STORAGE_PREFIX = "JS9:interface:";
-JS9.Customize.defaults = {theme: "light", accent: "#2563eb", density: "standard", minimal: false, menubar: true, toolbar: true, statusbar: true, menuBackground: "#e2e8f0", menuText: "#1e293b", menuFontSize: 13, toolbarTools: null};
+JS9.Customize.defaults = {theme: "light", accent: "#2563eb", density: "standard", minimal: false, menubar: true, toolbar: true, statusbar: true, menuBackground: "#e2e8f0", menuText: "#1e293b", menuFontSize: 13, toolbarTools: null, uiTokens: {}, uiClass: "", components: {}};
+JS9.Customize.tokenNames = {background: "--js9-ui-bg", surface: "--js9-ui-surface", control: "--js9-ui-control", text: "--js9-ui-text", muted: "--js9-ui-muted", border: "--js9-ui-border", accent: "--js9-accent", accentText: "--js9-accent-contrast", menuBackground: "--js9-menu-background", menuButtonBackground: "--js9-menu-button-background", toolbarBackground: "--js9-toolbar-background", statusBackground: "--js9-status-background", formBackground: "--js9-form-background", buttonBackground: "--js9-button-background", buttonHoverBackground: "--js9-button-hover-background", menuText: "--js9-menu-text", toolbarText: "--js9-toolbar-text", statusText: "--js9-status-text", formText: "--js9-form-text", titleBackground: "--js9-window-title-bg", titleText: "--js9-window-title-text", radius: "--js9-ui-radius", fontFamily: "--js9-ui-font"};
+JS9.Customize.componentNames = ["menu", "toolbar", "status", "window", "form"];
+JS9.Customize.componentFields = ["background", "textColor", "fontFamily", "fontSize", "height", "padding", "radius", "borderColor"];
 
 JS9.Customize.defaultToolbarTools = function(){
     const primary = JS9.globalOpts.toolBar || [];
@@ -4298,6 +4301,68 @@ JS9.Customize.chrome = function(display){
     const id = display.id;
     return $(`#${id}, #${id}Menubar, #${id}Toolbar, #${id}Statusbar`).add($(`[data-js9id="${id}"]`));
 };
+JS9.Customize.normalizeTokens = function(tokens){
+    const out = {};
+    if( !tokens || typeof tokens !== "object" ){ return out; }
+    Object.keys(JS9.Customize.tokenNames).forEach((key) => {
+	const value = tokens[key];
+	if( typeof value === "string" && value.length <= 120 && !/[;{}<>]/.test(value) ){
+	    out[key] = value.trim();
+	}
+    });
+    return out;
+};
+JS9.Customize.applyTokens = function(display, opts){
+    const tokens = JS9.Customize.normalizeTokens(opts.uiTokens);
+    const css = {};
+    const targets = JS9.Customize.chrome(display).add(document.documentElement);
+    targets.each(function(){
+	Object.keys(JS9.Customize.tokenNames).forEach((key) => this.style.removeProperty(JS9.Customize.tokenNames[key]));
+    });
+    Object.keys(tokens).forEach((key) => { css[JS9.Customize.tokenNames[key]] = tokens[key]; });
+    targets.css(css);
+    opts.uiTokens = tokens;
+    opts.uiClass = typeof opts.uiClass === "string" && /^[A-Za-z0-9_-]{0,48}$/.test(opts.uiClass) ? opts.uiClass : "";
+    $(document.documentElement).attr({"data-js9-ui-custom": Object.keys(tokens).length ? "true" : "false", "data-js9-ui-class": opts.uiClass});
+};
+JS9.Customize.normalizeComponents = function(components){
+    const out = {};
+    if( !components || typeof components !== "object" ){ return out; }
+    JS9.Customize.componentNames.forEach((name) => {
+	const component = components[name];
+	if( !component || typeof component !== "object" ){ return; }
+	out[name] = {};
+	JS9.Customize.componentFields.forEach((field) => {
+	    const value = component[field];
+	    if( typeof value === "string" && value.length <= 120 && !/[;{}<>]/.test(value) ){
+		out[name][field] = value.trim();
+	    }
+	});
+	if( !Object.keys(out[name]).length ){ delete out[name]; }
+    });
+    return out;
+};
+JS9.Customize.applyComponents = function(display, opts, extra){
+    const components = JS9.Customize.normalizeComponents(opts.components);
+    const css = {};
+    const targets = extra ? $(extra) : JS9.Customize.chrome(display).add(document.documentElement);
+    targets.each(function(){
+	JS9.Customize.componentNames.forEach((name) => JS9.Customize.componentFields.forEach((field) => this.style.removeProperty(`--js9-${name}-${field.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`)));
+    });
+    Object.keys(components).forEach((name) => Object.keys(components[name]).forEach((field) => { css[`--js9-${name}-${field.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`] = components[name][field]; }));
+    targets.css(css);
+    opts.components = components;
+};
+JS9.Customize.applyFloatingWindow = function(display, windowId){
+    const opts = JS9.Customize.read(display);
+    const tokens = JS9.Customize.normalizeTokens(opts.uiTokens);
+    const win = $(`#${windowId}`);
+    const css = {};
+    if( !win.length ){ return; }
+    Object.keys(tokens).forEach((key) => { css[JS9.Customize.tokenNames[key]] = tokens[key]; });
+    win.attr({"data-js9-display": display.id, "data-js9-ui-custom": Object.keys(tokens).length ? "true" : "false", "data-js9-theme": opts.theme, "data-js9-density": opts.density, "data-js9-ui-class": opts.uiClass}).css(css);
+    JS9.Customize.applyComponents(display, opts, win);
+};
 JS9.Customize.apply = function(display, requested){
     const opts = $.extend({}, JS9.Customize.read(display), requested || {});
     if( !/^#[0-9a-f]{6}$/i.test(opts.accent) ){ opts.accent = JS9.Customize.defaults.accent; }
@@ -4329,6 +4394,9 @@ JS9.Customize.apply = function(display, requested){
     $(`#${display.id}Menubar`).toggle(!!opts.menubar && !opts.minimal);
     $(`#${display.id}Toolbar`).toggle(!!opts.toolbar || opts.minimal);
     $(`#${display.id}Statusbar`).parent().toggle(!!opts.statusbar && !opts.minimal);
+    JS9.Customize.applyTokens(display, opts);
+    JS9.Customize.applyComponents(display, opts);
+    $(`.dhtmlwindow[data-js9-display="${display.id}"]`).each(function(){ JS9.Customize.applyFloatingWindow(display, this.id); });
     JS9.Customize.write(display, opts);
     return opts;
 };
@@ -4396,7 +4464,54 @@ JS9.Customize.init = function(){
 };
 JS9.mkPublic("GetInterface", function(...args){ const obj = JS9.parsePublicArgs(args); return JS9.Customize.read(JS9.lookupDisplay(obj.display)); });
 JS9.mkPublic("SetInterface", function(...args){ const obj = JS9.parsePublicArgs(args); return JS9.Customize.apply(JS9.lookupDisplay(obj.display), obj.argv[0]); });
+JS9.mkPublic("GetUIConfig", function(...args){ const obj = JS9.parsePublicArgs(args); const config = JS9.Customize.read(JS9.lookupDisplay(obj.display)); return $.extend({}, config, {tokens: config.uiTokens}); });
+JS9.mkPublic("SetUIConfig", function(...args){
+    const obj = JS9.parsePublicArgs(args);
+    const config = obj.argv[0] || {};
+    const requested = $.extend({}, config.interface || {});
+    ["theme", "accent", "density", "minimal", "menubar", "toolbar", "statusbar", "menuBackground", "menuText", "menuFontSize", "toolbarTools", "uiClass"].forEach((key) => {
+	if( Object.prototype.hasOwnProperty.call(config, key) ){ requested[key] = config[key]; }
+    });
+    if( config.layout && typeof config.layout === "object" ){
+	["density", "minimal", "menubar", "toolbar", "statusbar", "toolbarTools"].forEach((key) => {
+	    if( Object.prototype.hasOwnProperty.call(config.layout, key) ){ requested[key] = config.layout[key]; }
+	});
+    }
+    if( config.tokens ){ requested.uiTokens = config.tokens; }
+    if( config.components ){ requested.components = config.components; }
+    return JS9.Customize.apply(JS9.lookupDisplay(obj.display), requested);
+});
 JS9.RegisterPlugin(JS9.Customize.CLASS, JS9.Customize.NAME, JS9.Customize.init, {menuItem: "Customize appearance", winTitle: "Customize appearance", winResize: true, winDims: [JS9.Customize.WIDTH, JS9.Customize.HEIGHT]});
+// Extend the bundled Customizer with component-level controls. Kept here as a
+// compatibility layer for deployment bundles built before this UI was added.
+JS9.Customize.componentEditor = function(div, update){
+    const target = div.find("[name=componentTarget]").val() || "menu";
+    const all = $.extend(true, {}, div.data("js9Components") || {});
+    if( update ){
+	all[target] = all[target] || {};
+	["background", "textColor", "fontFamily", "padding", "borderColor"].forEach((field) => { const value = div.find(`[name=component${field}]`).val(); if( value ){ all[target][field] = value; } else { delete all[target][field]; } });
+	["fontSize", "height", "radius"].forEach((field) => { const value = div.find(`[name=component${field}]`).val(); if( value !== "" ){ all[target][field] = `${value}px`; } else { delete all[target][field]; } });
+	div.data("js9Components", all); return all;
+    }
+    const item = all[target] || {};
+    ["background", "textColor", "fontFamily", "padding", "borderColor"].forEach((field) => div.find(`[name=component${field}]`).val(item[field] || ""));
+    ["fontSize", "height", "radius"].forEach((field) => div.find(`[name=component${field}]`).val((item[field] || "").replace(/px$/, "")));
+    return all;
+};
+JS9.Customize._getFormOptions = JS9.Customize.getFormOptions;
+JS9.Customize.getFormOptions = function(div){ const opts = JS9.Customize._getFormOptions(div); opts.components = JS9.Customize.componentEditor(div, true); return opts; };
+JS9.Customize._updateForm = JS9.Customize.updateForm;
+JS9.Customize.updateForm = function(div, display, opts){ JS9.Customize._updateForm(div, display, opts); div.data("js9Components", $.extend(true, {}, opts.components || {})); JS9.Customize.componentEditor(div, false); };
+JS9.Customize._init = JS9.Customize.init;
+JS9.Customize.init = function(){
+    JS9.Customize._init.call(this);
+    const div = this.divjq;
+    div.find(".JS9CustomizeActions").before(`<section class="JS9CustomizeSection JS9ComponentEditor"><h3 class="JS9CustomizeSectionTitle">Component style</h3><p class="JS9CustomizeFieldHint">Select a component, then set only the values you want to override.</p><div class="JS9CustomizeGrid JS9CustomizeGridThree"><label><span>Component</span><select name="componentTarget"><option value="menu">Menu bar</option><option value="toolbar">Tool bar</option><option value="status">Status bar</option><option value="window">Floating window</option><option value="form">Plugin form</option></select></label><label><span>Background</span><input name="componentbackground" placeholder="#172554"></label><label><span>Text color</span><input name="componenttextColor" placeholder="#f8fafc"></label><label><span>Font family</span><input name="componentfontFamily" placeholder="system-ui, sans-serif"></label><label><span>Font size (px)</span><input name="componentfontSize" type="number" min="8" max="48"></label><label><span>Height (px)</span><input name="componentheight" type="number" min="0" max="240"></label><label><span>Padding</span><input name="componentpadding" placeholder="6px 10px"></label><label><span>Corner radius (px)</span><input name="componentradius" type="number" min="0" max="48"></label><label><span>Border color</span><input name="componentborderColor" placeholder="#475569"></label></div></section>`);
+    JS9.Customize.componentEditor(div, false);
+    div.find("[name=componentTarget]").on("change", () => JS9.Customize.componentEditor(div, false));
+    div.find(".JS9ComponentEditor input, .JS9ComponentEditor select").on("change", () => JS9.Customize.apply(this.display, JS9.Customize.getFormOptions(div)));
+};
+JS9.plugins.filter((plugin) => plugin.name === JS9.Customize.NAME).forEach((plugin) => { plugin.func = JS9.Customize.init; });
 /*
  * visibility of JS9 in-page plugin divs (January 13, 2017)
  */

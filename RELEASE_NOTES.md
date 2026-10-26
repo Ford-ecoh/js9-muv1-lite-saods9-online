@@ -1,3 +1,37 @@
+# JS9MuV1 Lite 1.5.1
+
+## Component-level appearance editor
+
+- Added a Component style section to Customize appearance. Menu bar, toolbar,
+  status bar, floating windows, and plugin forms can each set background,
+  text, font, font size, height, padding, corner radius, and border color.
+- Added the matching `components` object to `JS9.SetUIConfig()`.
+
+# JS9MuV1 Lite 1.5.0
+
+## UI architecture hardening
+
+- Floating plugin windows now inherit the UIConfig of their owning display,
+  allowing different viewers in one page to retain independent palettes.
+- Extended the semantic styling bridge to third-party plugin controls, native
+  file/color triggers, and supported scrollbars.
+- Added `ui-qa.html`, a repeatable multi-display, responsive, touch, keyboard,
+  and theme visual-regression checklist with a runtime API check.
+- Documented the browser boundary: system file and color dialogs remain native,
+  while their visible web controls are theme-aware.
+
+# JS9MuV1 Lite 1.4.22
+
+## Advanced UIConfig API
+
+- Added `JS9.SetUIConfig()` and `JS9.GetUIConfig()` for persistent,
+  application-controlled visual customization.
+- Added safe semantic tokens for background, surface, form control, text,
+  muted text, border, accent, title bar, radius, and font family; these apply
+  to floating windows and legacy plugin controls as well as viewer chrome.
+- Added an optional `ui` section to `theme.json`, plus an example observatory
+  palette in `theme.example.json`.
+
 # JS9MuV1 Lite 1.4.21
 
 ## Final UI refinements

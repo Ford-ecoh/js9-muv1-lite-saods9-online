@@ -1514,6 +1514,28 @@ html[data-js9-active-density="compact"] .drag-contentarea .JS9Plugin,
 html[data-js9-active-density="compact"] .drag-contentarea .JS9PluginContainer { font-size: 12px; }
 html[data-js9-active-density="compact"] .drag-contentarea :is(.JS9Plugin, .JS9PluginContainer) :is(button, input, select, textarea) { min-height: 24px; }
 html[data-js9-active-density="compact"] .JS9CustomizeSection { padding: 9px; }
+/* Public UIConfig semantic-token layer. These rules intentionally sit after
+ * legacy plugin CSS so an application can restyle the complete second-level
+ * interface without modifying JS9 markup or scientific plugin code. */
+html[data-js9-ui-custom="true"] .drag-handle { color: var(--js9-window-title-text, var(--js9-ui-text)); background: var(--js9-window-title-bg, var(--js9-ui-surface)); border-color: var(--js9-ui-border); font-family: var(--js9-ui-font, inherit); }
+html[data-js9-ui-custom="true"] .drag-contentarea,
+html[data-js9-ui-custom="true"] .drag-statusarea,
+html[data-js9-ui-custom="true"] .JS9Plugin,
+html[data-js9-ui-custom="true"] .JS9PluginContainer { color: var(--js9-ui-text); background: var(--js9-ui-bg); border-color: var(--js9-ui-border); font-family: var(--js9-ui-font, inherit); }
+html[data-js9-ui-custom="true"] :is(.drag-contentarea, .JS9Plugin, .JS9PluginContainer) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea) { color: var(--js9-ui-text); background: var(--js9-ui-control, var(--js9-ui-surface)); border-color: var(--js9-ui-border); border-radius: var(--js9-ui-radius, 6px); }
+html[data-js9-ui-custom="true"] :is(.drag-contentarea, .JS9Plugin, .JS9PluginContainer) :is(button, input[type="button"], input[type="submit"], input[type="reset"]) { border-color: var(--js9-ui-border); border-radius: var(--js9-ui-radius, 6px); font-family: var(--js9-ui-font, inherit); }
+html[data-js9-ui-custom="true"] :is(.drag-contentarea, .JS9Plugin, .JS9PluginContainer) :is(button, input[type="button"], input[type="submit"], input[type="reset"]):not(.JS9RunButton) { color: var(--js9-ui-text); background: var(--js9-ui-surface); }
+html[data-js9-ui-custom="true"] .JS9RunButton,
+html[data-js9-ui-custom="true"] .JS9CustomizeForm button { color: var(--js9-accent-contrast); background: var(--js9-accent); border-color: var(--js9-accent); }
+html[data-js9-ui-custom="true"] .context-menu-list { color: var(--js9-ui-text); background: var(--js9-ui-bg); border-color: var(--js9-ui-border); font-family: var(--js9-ui-font, inherit); }
+/* Browser-native pickers remain platform owned, but their visible trigger and
+ * scrolling surface follow the active UIConfig on browsers that expose them. */
+html[data-js9-ui-custom="true"] :is(.drag-contentarea, .JS9Plugin, .JS9PluginContainer) input[type="file"] { color: var(--js9-ui-text); }
+html[data-js9-ui-custom="true"] :is(.drag-contentarea, .JS9Plugin, .JS9PluginContainer) input[type="file"]::file-selector-button { margin-right: 8px; border: 1px solid var(--js9-ui-border); border-radius: var(--js9-ui-radius, 6px); padding: 5px 8px; color: var(--js9-accent-contrast); background: var(--js9-accent); font: inherit; }
+html[data-js9-ui-custom="true"] :is(.drag-contentarea, .JS9Plugin, .JS9PluginContainer) input[type="color"] { border: 1px solid var(--js9-ui-border); border-radius: var(--js9-ui-radius, 6px); background: var(--js9-ui-control, var(--js9-ui-surface)); }
+html[data-js9-ui-custom="true"] :is(.drag-contentarea, .JS9Plugin, .JS9PluginContainer) { scrollbar-color: var(--js9-ui-muted) var(--js9-ui-bg); }
+html[data-js9-ui-custom="true"] :is(.drag-contentarea, .JS9Plugin, .JS9PluginContainer)::-webkit-scrollbar { width: 10px; height: 10px; }
+html[data-js9-ui-custom="true"] :is(.drag-contentarea, .JS9Plugin, .JS9PluginContainer)::-webkit-scrollbar-thumb { border: 2px solid var(--js9-ui-bg); border-radius: 999px; background: var(--js9-ui-muted); }
 html[data-js9-active-theme="dark"] .JS9CustomizeSection { border-color: #475569; background: #1f2937; }
 html[data-js9-active-theme="dark"] .JS9CustomizeSectionTitle { color: #f8fafc; }
 html[data-js9-active-theme="midnight"] .JS9CustomizeSection { border-color: #334155; background: #172554; }
@@ -1527,7 +1549,7 @@ html[data-js9-active-theme="contrast"] .JS9CustomizeSectionTitle { color: #fffff
 [data-js9-theme] .JS9MenubarContainer .JS9Button,
 [data-js9-theme] .JS9MenubarContainer .JS9Button-classic,
 [data-js9-theme] .JS9MenubarContainer .JS9Button-flat,
-[data-js9-theme] .JS9MenubarContainer .JS9Button-border { color: var(--js9-menu-text); font-size: var(--js9-menu-font-size); text-shadow: none; }
+[data-js9-theme] .JS9MenubarContainer .JS9Button-border { color: var(--js9-menu-text) !important; background: transparent !important; font-size: var(--js9-menu-font-size); text-shadow: none; }
 [data-js9-theme] .JS9MenubarContainer .JS9Button:hover,
 [data-js9-theme] .JS9MenubarContainer .JS9Button-classic:hover,
 [data-js9-theme] .JS9MenubarContainer .JS9Button-flat:hover,
@@ -2473,3 +2495,31 @@ span.JS9SyncUINoFile {
     .JS9ImarithActions span, .JS9ImarithActions input { width: 100%; }
     .JS9SeparateActions .separateLayoutSelect { margin-left: 0; flex: 1 1 100%; }
 }
+
+/* Per-location foreground tokens. The menu rule neutralizes legacy dark
+ * button fills, which otherwise can hide a light-menu foreground. */
+[data-js9-theme] .JS9MenubarContainer :is(.JS9Button, .JS9Button-classic, .JS9Button-flat, .JS9Button-border) { color: var(--js9-menu-text, var(--js9-ui-text)) !important; background: transparent !important; }
+[data-js9-theme] .JS9ToolbarContainer :is(.JS9ToolbarButtonButton, .JS9ToolbarTooltip) { color: var(--js9-toolbar-text, var(--js9-ui-text)) !important; }
+html[data-js9-ui-custom="true"] .JS9StatusbarContainer, html[data-js9-ui-custom="true"] .JS9StatusbarItem { color: var(--js9-status-text, var(--js9-ui-text)) !important; }
+html[data-js9-ui-custom="true"] :is(.drag-contentarea, .JS9Plugin, .JS9PluginContainer) :is(label, input, select, textarea) { color: var(--js9-form-text, var(--js9-ui-text)); }
+/* Position-level backgrounds for UIConfig. Each token falls back to the
+ * semantic surface palette so only the locations an application needs must be
+ * supplied. */
+[data-js9-theme] .JS9MenubarContainer { background: var(--js9-menu-background, var(--js9-ui-surface)) !important; }
+[data-js9-theme] .JS9MenubarContainer :is(.JS9Button, .JS9Button-classic, .JS9Button-flat, .JS9Button-border) { background: var(--js9-menu-button-background, transparent) !important; }
+[data-js9-theme] .JS9MenubarContainer :is(.JS9Button, .JS9Button-classic, .JS9Button-flat, .JS9Button-border):hover { background: var(--js9-button-hover-background, color-mix(in srgb, var(--js9-accent) 16%, transparent)) !important; }
+[data-js9-theme] .JS9ToolbarContainer { background: var(--js9-toolbar-background, var(--js9-ui-bg)) !important; }
+html[data-js9-ui-custom="true"] .JS9StatusbarContainer { background: var(--js9-status-background, var(--js9-ui-bg)) !important; }
+html[data-js9-ui-custom="true"] :is(.drag-contentarea, .JS9Plugin, .JS9PluginContainer) { background: var(--js9-form-background, var(--js9-ui-bg)); }
+html[data-js9-ui-custom="true"] :is(.drag-contentarea, .JS9Plugin, .JS9PluginContainer) :is(button, input[type="button"], input[type="submit"], input[type="reset"]):not(.JS9RunButton) { background: var(--js9-button-background, var(--js9-ui-surface)); }
+html[data-js9-ui-custom="true"] :is(.drag-contentarea, .JS9Plugin, .JS9PluginContainer) :is(button, input[type="button"], input[type="submit"], input[type="reset"]):not(.JS9RunButton):hover { background: var(--js9-button-hover-background, var(--js9-ui-control)); }
+
+/* Component-level design controls, applied by SetUIConfig({components}). */
+[data-js9-theme] .JS9MenubarContainer { min-height: var(--js9-menu-height, auto); padding: var(--js9-menu-padding, 4px 6px); border-radius: var(--js9-menu-radius, 10px); border-color: var(--js9-menu-border-color, currentColor); font-family: var(--js9-menu-font-family, inherit); }
+[data-js9-theme] .JS9MenubarContainer :is(.JS9Button, .JS9Button-classic, .JS9Button-flat, .JS9Button-border) { color: var(--js9-menu-text-color, var(--js9-menu-text)) !important; font-size: var(--js9-menu-font-size, inherit); }
+[data-js9-theme] .JS9ToolbarContainer { min-height: var(--js9-toolbar-height, auto); padding: var(--js9-toolbar-padding, inherit); border-radius: var(--js9-toolbar-radius, 0); border-color: var(--js9-toolbar-border-color, currentColor); font-family: var(--js9-toolbar-font-family, inherit); }
+[data-js9-theme] .JS9ToolbarContainer :is(.JS9ToolbarButtonButton, .JS9ToolbarTooltip) { color: var(--js9-toolbar-text-color, var(--js9-toolbar-text, var(--js9-ui-text))) !important; font-size: var(--js9-toolbar-font-size, inherit); }
+html[data-js9-ui-custom="true"] .JS9StatusbarContainer { min-height: var(--js9-status-height, auto); padding: var(--js9-status-padding, inherit); border-radius: var(--js9-status-radius, 0); border-color: var(--js9-status-border-color, currentColor); font-family: var(--js9-status-font-family, inherit); font-size: var(--js9-status-font-size, inherit); }
+html[data-js9-ui-custom="true"] .drag-handle { min-height: var(--js9-window-height, auto); padding: var(--js9-window-padding, inherit); border-radius: var(--js9-window-radius, 0); border-color: var(--js9-window-border-color, var(--js9-ui-border)); font-family: var(--js9-window-font-family, inherit); font-size: var(--js9-window-font-size, inherit); }
+html[data-js9-ui-custom="true"] :is(.drag-contentarea, .JS9Plugin, .JS9PluginContainer) { padding: var(--js9-form-padding, inherit); border-radius: var(--js9-form-radius, 0); border-color: var(--js9-form-border-color, var(--js9-ui-border)); font-family: var(--js9-form-font-family, inherit); font-size: var(--js9-form-font-size, inherit); }
+html[data-js9-ui-custom="true"] :is(.drag-contentarea, .JS9Plugin, .JS9PluginContainer) :is(input, select, textarea, button) { min-height: var(--js9-form-height, auto); }

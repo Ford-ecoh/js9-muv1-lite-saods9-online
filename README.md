@@ -5,7 +5,7 @@ image inspection, regions, WCS-aware measurements, and annular photometry. It
 uses the JS9 3.9 runtime, retains the public JS9 API, and adds a modern,
 theme-aware interface and integration layer.
 
-**Release:** 1.4.21 · **License:** MIT
+**Release:** 1.5.1 · **License:** MIT
 
 > JS9MuV1 is independently maintained and is not an official upstream JS9
 > release. JS9 is credited in [Upstream attribution](#upstream-attribution-and-security).
@@ -20,6 +20,8 @@ theme-aware interface and integration layer.
   flux uncertainty, S/N, FWHM, and instrumental/calibrated magnitudes.
 - Standard/Compact density and a Quick-look mode for an image-first preview
   workspace; the Customize panel also lists the principal keyboard shortcuts.
+- `SetUIConfig()` for semantic design tokens, a host-page UI class, and a
+  JSON-configurable observatory-branded interface.
 - A standard Web Component, a Vue 3 wrapper, and explicit observatory
   quick-look, status, error, state, region, event, and photometry APIs.
 
@@ -77,6 +79,30 @@ Use the standard `window.JS9` API plus these JS9MuV1 helpers:
 They return explicit success/error states, intended for backend or observatory
 integration instead of parsing a browser panel.
 
+### Advanced UI configuration
+
+`JS9.SetUIConfig()` applies and stores a high-level UI configuration per
+display. It accepts all `SetInterface()` options plus `tokens` and `uiClass`:
+
+```js
+JS9.SetUIConfig({
+  density: "compact",
+  minimal: true,
+  uiClass: "observatory-preview",
+  tokens: {
+    background: "#0b1020", surface: "#172554", control: "#0f172a",
+    text: "#e0f2fe", muted: "#93c5fd", border: "#334155",
+    titleBackground: "#172554", titleText: "#f8fafc",
+    radius: "8px", fontFamily: "system-ui, sans-serif"
+  }
+}, { display: "science" });
+```
+
+Supported tokens are deliberately limited to visual values; the API does not
+accept arbitrary CSS or HTML. Host-page CSS can target
+`html[data-js9-ui-class="observatory-preview"]` for further application-owned
+styling.
+
 ## Documentation
 
 | Resource | Purpose |
@@ -86,6 +112,7 @@ integration instead of parsing a browser panel.
 | [Release notes](RELEASE_NOTES.md) | Version history |
 | [Version manifest](VERSION.json) | Machine-readable package information |
 | [Self-check](selfcheck.html) | Browser/runtime diagnostic page |
+| [UI QA checklist](ui-qa.html) | Multi-display and responsive visual-regression checklist |
 | [Vue wrapper README](vue/README.md) | Vue setup |
 | [Web Component README](web-component/README.md) | Framework-neutral setup |
 

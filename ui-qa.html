@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JS9MuV1 UI QA</title>
+  <link rel="stylesheet" href="js9support.css">
+  <link rel="stylesheet" href="js9.css">
+  <style>body{margin:24px;background:#0b1020;color:#e5edf9;font:14px/1.5 system-ui,sans-serif}main{max-width:760px;margin:auto;padding:24px;border:1px solid #334155;border-radius:14px;background:#111827}code{color:#bae6fd}li{margin:.45rem 0}.pass{color:#86efac}.fail{color:#fca5a5}</style>
+  <script src="js9prefs.js"></script><script src="js9support.min.js"></script><script src="js9.min.js"></script><script src="js9plugins.js"></script>
+</head>
+<body><main><h1>UI visual QA checklist</h1><p>This page is a repeatable release check for the Lite interface. Run it over HTTP, then open two viewer pages in the same browser tab or window and apply different <code>UIConfig</code> palettes.</p><ol><li>Open <a href="js9.html">the viewer</a> twice with distinct display ids in an embedding page.</li><li>Open a floating plugin from each display and confirm its title, form controls, and text retain the owner display’s palette.</li><li>Check Light, Dark, Midnight, High contrast, Compact, and Quick-look modes at 320px, 768px, and desktop widths.</li><li>Check keyboard-only focus, touch scrolling, file triggers, color controls, Region Edit, and Region Stats.</li></ol><p id="result">Checking runtime…</p></main><script>window.addEventListener("load",()=>{const ok=window.JS9&&typeof JS9.SetUIConfig==="function"&&typeof JS9.GetUIConfig==="function";const e=document.querySelector("#result");e.className=ok?"pass":"fail";e.textContent=ok?"PASS: UIConfig runtime API is available.":"FAIL: UIConfig runtime API is unavailable.";});</script></body></html>

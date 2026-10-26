@@ -16,5 +16,20 @@
     "full image",
     "zoom+",
     "zoom-"
-  ]
+  ],
+  "ui": {
+    "uiClass": "observatory-preview",
+    "tokens": {
+      "background": "#0b1020",
+      "surface": "#172554",
+      "control": "#0f172a",
+      "text": "#e0f2fe",
+      "muted": "#93c5fd",
+      "border": "#334155",
+      "titleBackground": "#172554",
+      "titleText": "#f8fafc",
+      "radius": "8px",
+      "fontFamily": "system-ui, sans-serif"
+    }
+  }
 }
