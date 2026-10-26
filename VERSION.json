@@ -1,0 +1,22 @@
+{
+  "name": "JS9MuV1 Lite",
+  "release": "1.4.19",
+  "js9Version": "3.9",
+  "releaseDate": "2026-10-12",
+  "edition": "deployment",
+  "included": [
+    "JS9 browser runtime and WebAssembly FITS engine",
+    "scientific plugins and help",
+    "Web Component",
+    "Vue 3 wrapper",
+    "Chinese deployment guide",
+    "shared theme-aware UI layer for core plugins"
+  ],
+  "excluded": [
+    "demos",
+    "tests",
+    "build source",
+    "Node dependencies",
+    "Vue example application"
+  ]
+}

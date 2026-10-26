@@ -1,0 +1,13 @@
+js9-viewer { display: inline-block; max-width: 100%; }
+js9-viewer .js9-viewer-chrome { margin-bottom: 2px; }
+js9-viewer .js9-viewer-colorbar { width: fit-content; max-width: 100%; margin-top: 2px; overflow: hidden; }
+js9-viewer .js9-viewer-colorbar[hidden] { display: none; }
+js9-viewer .js9-viewer-status { margin-top: 2px; }
+js9-viewer .js9-viewer-feedback { margin: 8px 0 0; color: #475569; font: 13px/1.4 system-ui, sans-serif; }
+js9-viewer .js9-viewer-feedback[data-state="loading"] { color: #2563eb; }
+js9-viewer .js9-viewer-feedback[data-state="loaded"] { color: #047857; }
+js9-viewer .js9-viewer-feedback[data-state="error"] { color: #b91c1c; }
+js9-viewer .js9-viewer-error { margin-top: 8px; padding: 10px 12px; border: 1px solid #fecaca; border-radius: 8px; color: #991b1b; background: #fef2f2; font: 13px/1.45 system-ui, sans-serif; }
+js9-viewer .js9-viewer-error[hidden] { display: none; }
+js9-viewer .js9-viewer-error-detail { margin: 0; }
+js9-viewer .js9-viewer-retry { margin-top: 8px; border: 0; border-radius: 6px; padding: 6px 9px; color: #fff; background: #b91c1c; font: inherit; cursor: pointer; }

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>JS9MuV1 Observation Preview API</title>
+<style>body{max-width:900px;margin:32px auto;padding:0 20px;color:#1e293b;font:16px/1.55 system-ui,sans-serif}code,pre{background:#f1f5f9;border-radius:6px}code{padding:2px 4px}pre{padding:14px;overflow:auto}h1,h2{color:#0f172a}table{border-collapse:collapse}td,th{padding:7px;border:1px solid #cbd5e1;text-align:left}</style>
+</head>
+<body>
+<h1>Observation Preview API</h1>
+<p>Use this API when an observing system has finished writing a FITS file and needs a fast browser preview. It downloads the file, gives newer exposures priority, retries temporary failures, loads through the standard JS9 FITS path, and emits a compact quality summary.</p>
+<pre><code>const job = JS9.LoadObservationPreview({
+  observationId: "obs-20261011-0042",
+  status: "completed",
+  url: "https://observatory.example/data/frame0042.fits.gz",
+  filename: "frame0042.fits.gz"
+}, {
+  retries: 2,
+  retryDelayMs: 1000,
+  loadOptions: { scale: "zscale" }
+}, { display: "science" });</code></pre>
+<p>A file whose status is not <code>complete</code>, <code>completed</code>, <code>ready</code>, or <code>downloaded</code> is not loaded. With the default <code>latestWins:true</code>, a request for a newer image aborts the older in-progress download for that display.</p>
+
+<h2>Status and events</h2>
+<pre><code>JS9.Subscribe("observationpreview", (event) =&gt; {
+  const job = event.payload;
+  // queued, downloading, retrying, loading, ready, failed, or cancelled
+  updateObservationUI(job.status, job.quality);
+}, { display: "science" });
+
+const current = JS9.GetObservationPreviewStatus({ display: "science" });</code></pre>
+<p>The same notifications are dispatched as the browser event <code>js9muv1:observationpreview</code>. Failed requests contain an <code>error</code>; retry attempts and cancellations are explicit, so a host system need not infer state from alert dialogs.</p>
+
+<h2>Quality summary</h2>
+<pre><code>const qc = JS9.GetImageQualitySummary({
+  saturationLevel: 60000
+}, { display: "science" });</code></pre>
+<p>The result includes image dimensions, data minimum/maximum, zscale limits, WCS validity, and common FITS metadata: object, filter, exposure, observation time, telescope, and instrument. Supplying <code>saturationLevel</code> counts saturated pixels and returns their fraction. If a FITS <code>SATURATE</code> card exists, it is used automatically.</p>
+</body>
+</html>

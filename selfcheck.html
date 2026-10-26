@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JS9MuV1 Lite · Dependency check</title>
+    <style>
+      :root { color-scheme: dark; font-family: ui-sans-serif, system-ui, sans-serif; background: #0b1220; color: #e5edf9; }
+      body { margin: 0; padding: 2rem; }
+      main { max-width: 760px; margin: auto; }
+      h1 { margin-bottom: .25rem; } p { color: #b8c5da; line-height: 1.55; }
+      #summary { padding: .85rem 1rem; border-radius: 10px; background: #1e293b; font-weight: 650; }
+      .ok { color: #86efac; } .fail { color: #fca5a5; } .pending { color: #fcd34d; }
+      ul { list-style: none; padding: 0; border: 1px solid #26364f; border-radius: 12px; overflow: hidden; }
+      li { display: flex; justify-content: space-between; gap: 1rem; padding: .8rem 1rem; border-bottom: 1px solid #26364f; } li:last-child { border: 0; }
+      code { color: #bfdbfe; } a { color: #93c5fd; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Dependency check</h1>
+      <p>This page only checks whether local JS9MuV1 Lite files can be fetched. It does not load, inspect, or upload FITS data.</p>
+      <p id="summary" class="pending">Checking package files…</p>
+      <ul id="checks"></ul>
+      <p><a href="index.html">Back to package home</a> · <a href="VERSION.json">Version manifest</a></p>
+    </main>
+    <script>
+      const required = [
+        ["Version manifest", "VERSION.json"], ["JS9 core", "js9.min.js"],
+        ["UI support", "js9support.min.js"], ["Plugins", "js9plugins.js"],
+        ["FITS WebAssembly", "astroemw.wasm"], ["Web Component", "web-component/js9-viewer-element.js"],
+        ["Vue wrapper", "vue/JS9Viewer.vue"], ["Theme loader", "theme-loader.js"]
+      ];
+      const list = document.querySelector("#checks");
+      const summary = document.querySelector("#summary");
+      Promise.all(required.map(async ([name, path]) => {
+        let ok = false, detail = "unavailable";
+        try {
+          const response = await fetch(path, {method: "HEAD", cache: "no-store"});
+          ok = response.ok;
+          detail = `${response.status} ${response.statusText || "OK"}`;
+        } catch (error) { detail = error.message; }
+        const item = document.createElement("li");
+        item.innerHTML = `<span>${name}<br><code>${path}</code></span><strong class="${ok ? "ok" : "fail"}">${detail}</strong>`;
+        list.append(item);
+        return ok;
+      })).then((results) => {
+        const passed = results.filter(Boolean).length;
+        summary.textContent = `${passed}/${results.length} required files are available.`;
+        summary.className = passed === results.length ? "ok" : "fail";
+      });
+    </script>
+  </body>
+</html>

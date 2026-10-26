@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>JS9MuV1 Annulus Photometry API</title>
+<style>
+body{max-width:900px;margin:32px auto;padding:0 20px;color:#1e293b;font:16px/1.55 system-ui,sans-serif}code,pre{background:#f1f5f9;border-radius:6px}code{padding:2px 4px}pre{padding:14px;overflow:auto}h1,h2{color:#0f172a}dt{font-weight:700}dd{margin:0 0 12px}
+</style>
+</head>
+<body>
+<h1>Annulus Photometry API</h1>
+<p>These synchronous browser APIs expose the scientific annulus calculation without opening Region Stats. Coordinates and radii are image pixels. The source aperture is the innermost radius; pixels out to the outermost radius provide the robust sky estimate.</p>
+
+<h2>Single annulus</h2>
+<pre><code>const measurement = JS9.GetAnnulusPhotometry({
+  x: 512.4,
+  y: 498.1,
+  sourceRadius: 8,
+  skyOuterRadius: 18,
+  calibration: { exposure: 60, zeroPoint: 25.13 }
+}, { display: "JS9" });</code></pre>
+<p>Alternatively pass the <code>id</code> of an existing annulus region, or the region object returned by <code>JS9.GetRegions()</code>:</p>
+<pre><code>const measurement = JS9.GetAnnulusPhotometry("region3", { display: "JS9" });</code></pre>
+
+<h2>All displayed annuli</h2>
+<pre><code>const batch = JS9.GetAllAnnulusPhotometry({
+  calibration: { exposure: 60, zeroPoint: 25.13 }
+}, { display: "JS9" });</code></pre>
+
+<h2>Response</h2>
+<p>A successful response has <code>ok: true</code> and a versioned <code>schema</code>. Its top-level fields are:</p>
+<dl>
+<dt><code>region</code></dt><dd>Region id, center, and radii used for the calculation.</dd>
+<dt><code>aperture</code></dt><dd>Source and sky radii in pixels, plus WCS pixel scale in arcsec/pixel when available.</dd>
+<dt><code>background</code></dt><dd>Robust median background, RMS, and retained sky-pixel count.</dd>
+<dt><code>photometry</code></dt><dd>Raw counts, background-subtracted flux, flux error, S/N, count rate, and FWHM.</dd>
+<dt><code>magnitude</code></dt><dd>Instrumental magnitude, calibrated magnitude, error, zero point, and exposure.</dd>
+</dl>
+<p>Invalid input returns <code>{ok:false, error:"..."}</code>. A failed flux measurement is represented by <code>null</code> for affected derived values, never an infinite numeric value.</p>
+
+<h2>Viewer, regions, and events</h2>
+<p>JS9MuV1 also exposes compact, JSON-safe interfaces for a host application or a backend bridge. They do not expose FITS pixels; use the established <code>JS9.GetImageData()</code> API when pixel data is intentionally required.</p>
+<pre><code>// Current image metadata and visual state (pan, zoom, scale, colormap, WCS)
+const state = JS9.GetViewerState({ display: "science" });
+
+// Export/import region objects without saving a browser file
+const saved = JS9.ExportRegionsJSON("all", { display: "science" });
+JS9.ImportRegionsJSON(saved, { replace: true }, { display: "science" });
+
+// React to a user edit or a programmatic pan/zoom/scale change
+const token = JS9.Subscribe("regionschange", (event) =&gt; {
+  console.log(event.payload.region);
+}, { display: "science" });
+JS9.Unsubscribe(token);</code></pre>
+<p><code>ExportRegionsJSON()</code> returns the versioned <code>js9muv1.regions/v1</code> payload. <code>ImportRegionsJSON()</code> accepts that payload or its <code>regions</code> array; <code>replace:true</code> first clears existing regions. Events are <code>regionschange</code> and <code>viewchange</code>, each with a versioned event envelope. The same events are also dispatched on <code>window</code> as <code>js9muv1:regionschange</code> and <code>js9muv1:viewchange</code>.</p>
+</body>
+</html>

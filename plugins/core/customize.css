@@ -1,0 +1,51 @@
+.JS9CustomizeForm { box-sizing: border-box; min-width: 0; font-family: Inter, system-ui, sans-serif; padding: 14px; color: var(--js9-ui-text, #1e293b); }
+.JS9CustomizeIntro { margin: 0 0 12px; color: var(--js9-ui-muted, #64748b); font-size: 12px; line-height: 1.45; }
+.JS9CustomizeForm fieldset { min-width: 0; border: 1px solid var(--js9-ui-border, #dbe3ef); border-radius: 10px; margin: 0 0 12px; padding: 11px; background: var(--js9-ui-bg, #f8fafc); }
+.JS9CustomizeForm legend { padding: 0 5px; color: var(--js9-ui-text, #334155); font-size: 12px; font-weight: 700; }
+.JS9CustomizeGrid, .JS9CustomizeSizeGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: end; }
+.JS9CustomizeGridThree { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.JS9CustomizeGrid label, .JS9CustomizeSizeGrid label { display: grid; min-width: 0; gap: 5px; margin: 0; color: var(--js9-ui-muted, #64748b); font-size: 11px; }
+.JS9CustomizeGrid label > span, .JS9CustomizeSizeGrid label > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.JS9CustomizeForm select, .JS9CustomizeForm input { width: 100%; min-width: 0; margin: 0; border: 1px solid var(--js9-ui-border, #cbd5e1); border-radius: 6px; padding: 4px 6px; color: var(--js9-ui-text, #334155); background: var(--js9-ui-surface, #fff); }
+.JS9CustomizeForm input[type="checkbox"] { accent-color: var(--js9-accent, #2563eb); }
+.JS9CustomizeForm input[type="color"] { height: 30px; padding: 2px; }
+.JS9CustomizeForm button { border: 0; border-radius: 7px; padding: 7px 10px; color: var(--js9-accent-contrast, #fff); background: var(--js9-accent, #2563eb); font: inherit; font-size: 12px; font-weight: 650; cursor: pointer; }
+.JS9CustomizeToggleGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+.JS9CustomizeToggleGrid label { display: flex; align-items: center; gap: 6px; min-width: 0; margin: 0; padding: 7px; border: 1px solid var(--js9-ui-border, #dbe3ef); border-radius: 7px; color: var(--js9-ui-text, #334155); background: var(--js9-ui-surface, #fff); font-size: 12px; }
+.JS9CustomizeToggleGrid input { width: auto; flex: 0 0 auto; }
+.JS9CustomizeToggleGrid span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.JS9CustomizeFieldHint { margin: 0 0 8px; color: var(--js9-ui-muted, #64748b); font-size: 11px; line-height: 1.35; }
+.JS9CustomizeToolbarList { max-height: 190px; overflow-y: auto; border: 1px solid var(--js9-ui-border, #dbe3ef); border-radius: 7px; background: var(--js9-ui-surface, #fff); }
+.JS9CustomizeToolbarItem { display: flex; align-items: center; justify-content: space-between; min-height: 32px; padding: 3px 5px 3px 8px; border-bottom: 1px solid var(--js9-ui-border, #eef2f7); }
+.JS9CustomizeToolbarItem:last-child { border-bottom: 0; }
+.JS9CustomizeToolbarItem label { display: flex; align-items: center; min-width: 0; gap: 6px; margin: 0; font-size: 12px; }
+.JS9CustomizeToolbarItem input { width: auto; flex: 0 0 auto; }
+.JS9CustomizeToolbarMove { display: inline-flex; gap: 3px; }
+.JS9CustomizeToolbarMove button { min-width: 25px; padding: 3px 5px; }
+.JS9CustomizeSizeGrid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; }
+.JS9CustomizeSizeGrid button { min-height: 30px; white-space: nowrap; }
+.JS9CustomizeActions { display: flex; justify-content: flex-end; }
+@media (max-width: 390px) { .JS9CustomizeGridThree, .JS9CustomizeToggleGrid { grid-template-columns: 1fr; } .JS9CustomizeSizeGrid { grid-template-columns: 1fr 1fr; } .JS9CustomizeSizeGrid button { grid-column: 1 / -1; } }
+[data-js9-theme] .JS9MenubarContainer,
+[data-js9-theme] .JS9MenubarContainer-classic,
+[data-js9-theme] .JS9MenubarContainer-flat,
+[data-js9-theme] .JS9MenubarContainer-border { background: var(--js9-menu-background) !important; color: var(--js9-menu-text); }
+[data-js9-theme] .JS9MenubarContainer .JS9Button,
+[data-js9-theme] .JS9MenubarContainer .JS9Button-classic,
+[data-js9-theme] .JS9MenubarContainer .JS9Button-flat,
+[data-js9-theme] .JS9MenubarContainer .JS9Button-border { color: var(--js9-menu-text); font-size: var(--js9-menu-font-size); text-shadow: none; }
+[data-js9-theme] .JS9MenubarContainer .JS9Button:hover,
+[data-js9-theme] .JS9MenubarContainer .JS9Button-classic:hover,
+[data-js9-theme] .JS9MenubarContainer .JS9Button-flat:hover,
+[data-js9-theme] .JS9MenubarContainer .JS9Button-border:hover { background: color-mix(in srgb, var(--js9-accent) 16%, transparent); border-color: color-mix(in srgb, var(--js9-accent) 35%, transparent); }
+[data-js9-theme] .JS9ToolbarContainer { border-color: color-mix(in srgb, var(--js9-accent) 32%, #cbd5e1); }
+[data-js9-theme] .JS9ToolbarImageButton:hover,
+[data-js9-theme] .JS9ToolbarButtonButton:hover { background: color-mix(in srgb, var(--js9-accent) 14%, transparent); border-color: color-mix(in srgb, var(--js9-accent) 35%, transparent); }
+[data-js9-theme] .JS9ToolbarImageButton:focus,
+[data-js9-theme] .JS9ToolbarButtonButton:focus { outline-color: var(--js9-accent, #2563eb); }
+/* Never theme .JS9Container: it is the image canvas stacking layer. */
+[data-js9-theme="dark"].JS9ToolbarContainer, [data-js9-theme="dark"] .JS9ToolbarContainer, [data-js9-theme="dark"].JS9Plugin, [data-js9-theme="dark"] .JS9Plugin { background: #1f2937; color: #f9fafb; }
+[data-js9-theme="midnight"].JS9ToolbarContainer, [data-js9-theme="midnight"] .JS9ToolbarContainer, [data-js9-theme="midnight"].JS9Plugin, [data-js9-theme="midnight"] .JS9Plugin { background: #0b1020; color: #dbeafe; }
+[data-js9-theme="contrast"].JS9ToolbarContainer, [data-js9-theme="contrast"] .JS9ToolbarContainer, [data-js9-theme="contrast"].JS9Plugin, [data-js9-theme="contrast"] .JS9Plugin { background: #000; color: #fff; }
+[data-js9-theme] .JS9Menubar, [data-js9-theme] .JS9ToolbarContainer, [data-js9-theme].JS9Menubar, [data-js9-theme].JS9ToolbarContainer { border-color: var(--js9-accent, #2563eb); }
+[data-js9-theme] .JS9ToolbarButtonButton:focus, [data-js9-theme] .JS9ToolbarImageButton:focus { outline-color: var(--js9-accent, #2563eb); }

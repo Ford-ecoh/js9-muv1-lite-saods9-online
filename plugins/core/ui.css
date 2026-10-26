@@ -1,0 +1,250 @@
+/* JS9MuV1 shared visual language for core plugin panels. */
+.JS9Plugin, .JS9PluginContainer {
+    --js9-ui-bg: #f8fafc;
+    --js9-ui-surface: #ffffff;
+    --js9-ui-border: #d8e0eb;
+    --js9-ui-text: #334155;
+    --js9-ui-muted: #64748b;
+    --js9-ui-accent: var(--js9-accent, #2563eb);
+    --js9-ui-accent-contrast: var(--js9-accent-contrast, #ffffff);
+    box-sizing: border-box;
+    color: var(--js9-ui-text);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.JS9Plugin :is(button, input, select, textarea) { font: inherit; }
+.JS9Plugin :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea) {
+    box-sizing: border-box;
+    min-height: 30px;
+    border: 1px solid var(--js9-ui-border);
+    border-radius: 6px;
+    padding: 4px 7px;
+    color: var(--js9-ui-text);
+    background: var(--js9-ui-surface);
+}
+.JS9Plugin input[type="checkbox"], .JS9Plugin input[type="radio"] { accent-color: var(--js9-ui-accent); }
+.JS9Plugin :is(button, input[type="button"], input[type="submit"], input[type="reset"]),
+.JS9PluginContainer :is(button, input[type="button"], input[type="submit"], input[type="reset"]) {
+    min-height: 30px;
+    border: 1px solid var(--js9-ui-border);
+    border-radius: 7px;
+    padding: 5px 9px;
+    color: var(--js9-ui-text);
+    background: var(--js9-ui-surface);
+    cursor: pointer;
+    transition: background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+.JS9Plugin :is(button, input[type="button"], input[type="submit"], input[type="reset"]):hover {
+    border-color: color-mix(in srgb, var(--js9-ui-accent) 38%, var(--js9-ui-border));
+    background: color-mix(in srgb, var(--js9-ui-accent) 9%, var(--js9-ui-surface));
+}
+.JS9Plugin :is(button, input, select, textarea):focus-visible {
+    outline: 2px solid var(--js9-ui-accent);
+    outline-offset: 1px;
+}
+
+:where(.JS9BlendContainer, .JS9BlinkContainer, .JS9CmapsContainer, .JS9ColorContainer, .JS9CubeContainer, .JS9DivsContainer, .JS9FiltersContainer, .JS9ImarithContainer, .JS9KeyboardContainer, .JS9LayersContainer, .JS9MefContainer, .JS9MouseTouchContainer, .JS9PanZoomContainer, .JS9ScaleContainer, .JS9SeparateContainer, .JS9SyncUIContainer) {
+    box-sizing: border-box;
+    min-height: 100%;
+    padding: 12px;
+    background: var(--js9-ui-bg);
+}
+:where(.JS9BlendHeader, .JS9BlinkHeader, .JS9CmapsHeader, .JS9DivsHeader, .JS9KeyboardHeader, .JS9LayersHeader, .JS9MouseTouchHeader, .JS9MefHeader, .JS9SeparateHeader, .JS9SyncUIHeader, .JS9FiltersHeader) {
+    margin: 0 0 10px;
+    padding: 0 0 8px;
+    border: 0;
+    border-bottom: 1px solid var(--js9-ui-border);
+    color: var(--js9-ui-text);
+    background: transparent;
+    font-size: 13px;
+    font-weight: 700;
+}
+:where(.JS9BlendImage, .JS9BlinkImage, .JS9CmapsImage, .JS9DivsDiv, .JS9LayersLayer, .JS9MefExtension, .JS9MefInput, .JS9MouseTouchText, .JS9MouseTouchAction, .JS9SyncUIImageRow) {
+    box-sizing: border-box;
+    margin: 6px 0;
+    padding: 9px;
+    border: 1px solid var(--js9-ui-border);
+    border-radius: 8px;
+    color: var(--js9-ui-text);
+    background: var(--js9-ui-surface);
+}
+:where(.JS9BlendImageActive, .JS9BlinkImageActive, .JS9CmapsImageActive, .JS9LayersLayerActive, .JS9MefExtensionActive, .JS9SeparateImageActive) {
+    padding: 8px;
+    border: 2px solid var(--js9-ui-accent);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--js9-ui-accent) 8%, var(--js9-ui-surface));
+}
+:where(.JS9BlendImageInactive, .JS9BlinkImageInactive, .JS9CmapsImageInactive, .JS9LayersLayerInactive, .JS9MefExtensionInactive, .JS9SeparateImageInactive) {
+    padding: 9px;
+    border: 1px solid var(--js9-ui-border);
+    border-radius: 8px;
+}
+:where(.JS9ColorLinegroup, .JS9CubeLinegroup, .JS9FiltersLinegroup, .JS9ImarithLinegroup, .JS9PanZoomLinegroup) {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0 0 8px;
+    padding: 8px;
+    border: 1px solid var(--js9-ui-border);
+    border-radius: 8px;
+    background: var(--js9-ui-surface);
+}
+.JS9StatusbarContainer { color: var(--js9-ui-text, #334155); background: var(--js9-ui-bg, #f8fafc); font: 12px/1.35 Inter, system-ui, sans-serif; }
+.JS9StatusbarItem { border-radius: 6px; color: var(--js9-ui-text, #334155); background: transparent; }
+.JS9StatusbarItemHighlight { border-color: color-mix(in srgb, var(--js9-ui-accent, #2563eb) 45%, var(--js9-ui-border, #d8e0eb)); background: color-mix(in srgb, var(--js9-ui-accent, #2563eb) 9%, var(--js9-ui-surface, #ffffff)); }
+.JS9StatusbarItemHighlight2 { border-color: var(--js9-ui-accent, #2563eb); }
+
+/* Region Stats follows the selected interface theme instead of forcing dark mode. */
+.JS9RegionStats {
+    --rs-bg: var(--js9-ui-bg, #f8fafc);
+    --rs-surface: var(--js9-ui-surface, #ffffff);
+    --rs-border: var(--js9-ui-border, #d8e0eb);
+    --rs-text: var(--js9-ui-text, #334155);
+    --rs-muted: var(--js9-ui-muted, #64748b);
+    box-sizing: border-box;
+    min-height: 100%;
+    padding: 14px;
+    color: var(--rs-text);
+    background: var(--rs-bg);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.JS9RegionStats header, .JS9RegionStatsMagnitude { border-color: var(--rs-border); }
+.JS9RegionStats h3, .JS9RegionStatsMetric strong { color: var(--rs-text); }
+.JS9RegionStatsEyebrow, .JS9RegionStatsBadge, .JS9RegionStatsFormula { color: var(--js9-ui-accent); }
+.JS9RegionStatsBadge { border-color: color-mix(in srgb, var(--js9-ui-accent) 42%, var(--rs-border)); }
+.JS9RegionStatsHint, .JS9RegionStatsMetric span, .JS9RegionStatsMetric small, .JS9RegionStatsCalibration label, .JS9RegionStatsCalibration label span { color: var(--rs-muted); }
+.JS9RegionStatsMetric { border-color: var(--rs-border); background: var(--rs-surface); }
+.JS9RegionStatsRate { color: var(--rs-muted); }
+.JS9RegionStatsRate strong { color: var(--rs-text); }
+.JS9RegionStatsCalibration { border-color: color-mix(in srgb, var(--js9-ui-accent) 30%, var(--rs-border)); background: color-mix(in srgb, var(--js9-ui-accent) 7%, var(--rs-surface)); }
+.JS9RegionStatsFormTitle { color: var(--rs-text); }
+.JS9RegionStatsCalibration input { border-color: var(--rs-border); color: var(--rs-text); background: var(--rs-surface); }
+.JS9RegionStatsCalibration button {
+    color: var(--js9-ui-accent-contrast, #ffffff) !important;
+    background: var(--js9-ui-accent, #2563eb) !important;
+    border: 1px solid color-mix(in srgb, var(--js9-ui-accent, #2563eb) 72%, #000000) !important;
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--js9-ui-accent, #2563eb) 35%, transparent);
+}
+
+/* The Region Stats tab strip belongs to the Edit Region dialog, not the
+ * plugin root. Keep it readable in every floating-window theme. */
+.JS9RegionDialogTabbar { background: var(--js9-ui-bg, #e2e8f0); }
+.JS9RegionDialogTab { color: var(--js9-ui-muted, #475569); }
+.JS9RegionDialogTab.active { color: var(--js9-ui-text, #334155); background: var(--js9-ui-surface, #ffffff); }
+
+/* Some older panels use JS9PluginContainer without an inner JS9Plugin. */
+.JS9PluginContainer {
+    color: var(--js9-ui-text, #334155);
+    background: var(--js9-ui-bg, #f8fafc);
+}
+.JS9PluginContainer :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea) {
+    color: var(--js9-ui-text, #334155);
+    background: var(--js9-ui-surface, #ffffff);
+    border-color: var(--js9-ui-border, #d8e0eb);
+}
+
+:is([data-js9-theme="dark"], [data-js9-theme="midnight"], [data-js9-theme="contrast"]) .JS9Plugin,
+.JS9Plugin:is([data-js9-theme="dark"], [data-js9-theme="midnight"], [data-js9-theme="contrast"]) {
+    --js9-ui-bg: #111827;
+    --js9-ui-surface: #1f2937;
+    --js9-ui-border: #475569;
+    --js9-ui-text: #e5edf9;
+    --js9-ui-muted: #a8b5c9;
+}
+
+/* Responsive structure for the traditional control panels. */
+.JS9ColorLinegroup, .JS9PanZoomLinegroup {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    align-items: center;
+    float: none;
+    position: static;
+    width: 100%;
+    height: auto;
+    margin: 0 0 8px;
+}
+.JS9ColorLinegroup > :is(.JS9ColorCol1, .JS9ColorCol2, .JS9ColorCol3, .JS9ColorCol4),
+.JS9PanZoomLinegroup > :is(.JS9PanZoomCol1, .JS9PanZoomCol2, .JS9PanZoomCol3, .JS9PanZoomCol4, .JS9PanZoomCol5) {
+    position: static;
+    left: auto;
+    top: auto;
+    width: 100%;
+    min-width: 0;
+}
+.JS9ColorLinegroup > :is(.JS9ColorButton, .JS9ColorSelect, .JS9ColorInput),
+.JS9PanZoomLinegroup > :is(.JS9PanZoomButton, .JS9PanZoomSelect, .JS9PanZoomInput) { width: 100%; }
+.JS9ColorLinegroup > .JS9ColorCol4 ~ .JS9ColorCol4 { grid-column: span 1; }
+
+.JS9ScaleControls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.JS9ScaleHelp { color: var(--js9-ui-muted); line-height: 1.5; }
+.JS9ScaleControls :is(select, input) { flex: 1 1 135px; min-width: 0; }
+.JS9ScaleChart { padding: 10px; }
+.JS9ScalePlotTitle { margin-bottom: 8px; color: var(--js9-ui-muted); font-size: 12px; font-weight: 650; text-align: center; }
+.JS9ScalePlot { max-width: 100%; }
+.JS9ScaleValues .JS9ScaleSpan { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; float: none !important; }
+.JS9ScaleValues input { max-width: 180px; }
+
+.JS9SyncUIContainer { display: flex; flex-direction: column; gap: 10px; }
+.JS9SyncUIHeader, .JS9SyncUIText { margin: 0; color: var(--js9-ui-text); background: transparent; }
+.JS9SyncUIOpContainer, .JS9SyncUIImageContainer, .JS9SyncUIOptsContainer { width: 100%; }
+.JS9SyncUIOpRow, .JS9SyncUIImageRow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 12px; width: 100%; height: auto; margin: 0; padding: 8px; }
+.JS9SyncUIOptsRow { display: flex; flex-wrap: wrap; gap: 10px 18px; width: 100%; height: auto; }
+.JS9SyncUIOpts { position: static !important; margin: 0; }
+.JS9SyncUIButtons { display: flex; justify-content: flex-end; margin: 0; padding: 10px 0 0; border-top: 1px solid var(--js9-ui-border); }
+.JS9SyncUIButtons > span { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; float: none !important; }
+
+.JS9BlendHeader, .JS9BlinkHeader, .JS9MefHeader { line-height: 1.5; }
+.JS9BlendHeader a { color: var(--js9-ui-accent); }
+.JS9MefHeader { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.JS9MefHeader span[style*="float"] { float: none !important; margin-left: auto; }
+.JS9MefEmpty { margin: 0; padding: 28px 16px; color: var(--js9-ui-muted); text-align: center; }
+
+@media (max-width: 560px) {
+    .JS9ColorLinegroup, .JS9PanZoomLinegroup { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .JS9ColorLinegroup > :is(.JS9ColorCol1, .JS9ColorCol2, .JS9ColorCol3, .JS9ColorCol4),
+    .JS9PanZoomLinegroup > :is(.JS9PanZoomCol1, .JS9PanZoomCol2, .JS9PanZoomCol3, .JS9PanZoomCol4, .JS9PanZoomCol5) { grid-column: auto; }
+    .JS9SyncUIOpRow, .JS9SyncUIImageRow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 360px) {
+    .JS9ColorLinegroup, .JS9PanZoomLinegroup, .JS9SyncUIOpRow, .JS9SyncUIImageRow { grid-template-columns: 1fr; }
+    .JS9SyncUIButtons, .JS9SyncUIButtons > span { justify-content: stretch; }
+    .JS9SyncUIButtons input { width: 100%; }
+}
+
+/* Legacy plugins upgraded to the shared panel rhythm. */
+.JS9PluginEmpty { margin: 0; padding: 28px 16px; color: var(--js9-ui-muted); text-align: center; }
+.JS9CubeLinegroup, .JS9ImarithLinegroup, .JS9SeparateSection { box-sizing: border-box; width: 100%; }
+.JS9CubeLinegroup { margin: 0 0 10px; }
+.JS9CubeHelp, .JS9ImarithHelp, .JS9SeparateDescription { margin: 0 0 10px; color: var(--js9-ui-muted); line-height: 1.5; }
+.JS9CubeControls, .JS9CubeActions, .JS9ImarithControls, .JS9ImarithActions, .JS9SeparateActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+.JS9CubeControls .JS9CubeSpan:first-child, .JS9CubeActions .JS9CubeSpan:first-child { flex: 1 1 250px; }
+.JS9CubeControls .JS9CubeSpan:last-child, .JS9CubeActions .JS9CubeSpan:last-child { flex: 0 1 auto; }
+.JS9CubeSpan { float: none !important; }
+.JS9CubeSpan > :is(input, select), .JS9ImarithControls :is(input, select), .JS9SeparateActions :is(input, select) { margin: 0 4px 0 0; }
+.JS9CubeLoad { padding-top: 2px; }
+.JS9ImarithControls .JS9ImarithSpan { display: flex; flex: 1 1 320px; flex-wrap: wrap; gap: 8px; align-items: center; float: none !important; }
+.JS9ImarithActions { justify-content: flex-end; }
+.JS9ImarithActions span { display: flex; flex-wrap: wrap; gap: 8px; float: none !important; }
+.JS9SeparateSection { padding: 12px 0; border-bottom: 1px solid var(--js9-ui-border); }
+.JS9SeparateSection:last-child { border-bottom: 0; }
+.JS9SeparateDescription { margin-top: 0; }
+.JS9SeparateActions .separateButton1, .JS9SeparateActions .separateButton2 { position: static !important; width: auto !important; }
+.JS9SeparateActions .separateLayoutSelect { margin-left: auto; }
+.JS9Plugin :is(.JS9KeyboardText, .JS9KeyboardAction, .JS9MouseTouchText, .JS9MouseTouchAction, .JS9CmapsText, .JS9CmapsAction) {
+    color: var(--js9-ui-text);
+    background: var(--js9-ui-surface);
+    border-color: var(--js9-ui-border);
+}
+.JS9FiltersLineheader { margin: 0 0 12px; color: var(--js9-ui-text); text-align: center; }
+
+@media (max-width: 420px) {
+    .JS9CubeControls .JS9CubeSpan, .JS9CubeActions .JS9CubeSpan { flex-basis: 100%; }
+    .JS9ImarithActions { justify-content: stretch; }
+    .JS9ImarithActions span, .JS9ImarithActions input { width: 100%; }
+    .JS9SeparateActions .separateLayoutSelect { margin-left: 0; flex: 1 1 100%; }
+}

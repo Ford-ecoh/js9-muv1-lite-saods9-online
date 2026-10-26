@@ -1,0 +1,90 @@
+.JS9ToolbarContainer{
+    border: 1px solid #d8e0eb;
+    border-radius: 10px;
+    background: #f8fafc;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.JS9ToolbarDiv{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 3px;
+    overflow: auto;
+    margin: 0;
+    padding: 5px 6px;
+}
+
+.JS9ToolbarButtonDiv{
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+}
+
+.JS9ToolbarImageButton{
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 5px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: transparent;
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.JS9ToolbarImageButton:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
+}
+
+.JS9ToolbarImageButton:hover {
+    border-color: #cbd5e1;
+    background: #e2e8f0;
+    transform: translateY(-1px);
+}
+
+.JS9ToolbarButtonButton{
+    vertical-align: middle;
+    border: 1px solid transparent;
+    background-color: transparent;
+    color: #334155;
+    padding: 6px 8px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 0;
+    border-radius: 7px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    cursor: pointer;
+    transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.JS9ToolbarButtonButton:hover {
+  border-color: #cbd5e1;
+  background: #e2e8f0;
+  transform: translateY(-1px);
+}
+
+.JS9ToolbarButtonButton:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
+}
+
+.JS9ToolbarTooltip{
+    position: relative;
+    z-index: 999;
+    border-radius: 8px;
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 8px 10px;
+    border: 1px solid #334155;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
+    font-family: system-ui, sans-serif;
+    font-size: 12px;
+    display: none;
+}
+

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JS9MuV1 Lite</title>
+    <style>
+      :root { color-scheme: dark; font-family: ui-sans-serif, system-ui, sans-serif; }
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0b1220; color: #e5edf9; }
+      main { width: min(680px, calc(100% - 3rem)); padding: 3rem; border: 1px solid #24324a; border-radius: 18px; background: #111b2d; box-shadow: 0 18px 60px #0007; }
+      h1 { margin-top: 0; letter-spacing: -.02em; }
+      p { color: #b8c5da; line-height: 1.65; }
+      nav { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.75rem; }
+      a { display: inline-block; padding: .7rem 1rem; border-radius: 9px; background: #245eac; color: white; text-decoration: none; font-weight: 650; }
+      a.secondary { background: #25354e; }
+      small { display: block; margin-top: 1.5rem; color: #8293af; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>JS9MuV1 Lite</h1>
+      <p>A deployment-ready JS9MuV1 package with the browser runtime, scientific plugins, Web Component, Vue wrapper, and documentation. Development demos and dependencies are intentionally omitted.</p>
+      <nav>
+        <a href="js9.html">Open JS9 viewer</a>
+        <a class="secondary" href="selfcheck.html">Dependency check</a>
+        <a class="secondary" href="使用指南.md">中文使用指南</a>
+        <a class="secondary" href="README.md">Upstream README</a>
+      </nav>
+      <small>Serve this directory over HTTP or HTTPS so WebAssembly can load correctly.</small>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,2467 @@
+@charset "UTF-8";
+/*!
+ * jQuery contextMenu - Plugin for simple contextMenu handling
+ *
+ * Version: v2.8.0
+ *
+ * Authors: Björn Brala (SWIS.nl), Rodney Rehm, Addy Osmani (patches for FF)
+ * Web: http://swisnl.github.io/jQuery-contextMenu/
+ *
+ * Copyright (c) 2011-2019 SWIS BV and contributors
+ *
+ * Licensed under
+ *   MIT License http://www.opensource.org/licenses/mit-license
+ *
+ * Date: 2019-01-16T15:45:48.418Z
+ */
+@-webkit-keyframes cm-spin {
+  0% {
+    -webkit-transform: translateY(-50%) rotate(0deg);
+            transform: translateY(-50%) rotate(0deg);
+  }
+  100% {
+    -webkit-transform: translateY(-50%) rotate(359deg);
+            transform: translateY(-50%) rotate(359deg);
+  }
+}
+@-o-keyframes cm-spin {
+  0% {
+    -webkit-transform: translateY(-50%) rotate(0deg);
+         -o-transform: translateY(-50%) rotate(0deg);
+            transform: translateY(-50%) rotate(0deg);
+  }
+  100% {
+    -webkit-transform: translateY(-50%) rotate(359deg);
+         -o-transform: translateY(-50%) rotate(359deg);
+            transform: translateY(-50%) rotate(359deg);
+  }
+}
+@keyframes cm-spin {
+  0% {
+    -webkit-transform: translateY(-50%) rotate(0deg);
+         -o-transform: translateY(-50%) rotate(0deg);
+            transform: translateY(-50%) rotate(0deg);
+  }
+  100% {
+    -webkit-transform: translateY(-50%) rotate(359deg);
+         -o-transform: translateY(-50%) rotate(359deg);
+            transform: translateY(-50%) rotate(359deg);
+  }
+}
+
+@font-face {
+  font-family: "context-menu-icons";
+  font-style: normal; 
+  font-weight: normal;
+
+  src: url("font/context-menu-icons.eot?2lkho");
+  src: url("font/context-menu-icons.eot?2lkho#iefix") format("embedded-opentype"), url("font/context-menu-icons.woff2?2lkho") format("woff2"), url("font/context-menu-icons.woff?2lkho") format("woff"), url("font/context-menu-icons.ttf?2lkho") format("truetype");
+}
+
+.context-menu-icon-add:before {
+  content: "\EA01";
+}
+
+.context-menu-icon-copy:before {
+  content: "\EA02";
+}
+
+.context-menu-icon-cut:before {
+  content: "\EA03";
+}
+
+.context-menu-icon-delete:before {
+  content: "\EA04";
+}
+
+.context-menu-icon-edit:before {
+  content: "\EA05";
+}
+
+.context-menu-icon-loading:before {
+  content: "\EA06";
+}
+
+.context-menu-icon-paste:before {
+  content: "\EA07";
+}
+
+.context-menu-icon-quit:before {
+  content: "\EA08";
+}
+
+.context-menu-icon::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 2em; 
+  font-family: "context-menu-icons";
+  font-size: 1em;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  color: #2980b9;
+  text-align: center;
+  -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+       -o-transform: translateY(-50%);
+          transform: translateY(-50%);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.context-menu-icon.context-menu-hover:before {
+  color: #fff;
+}
+
+.context-menu-icon.context-menu-disabled::before {
+  color: #bbb;
+}
+
+.context-menu-icon.context-menu-icon-loading:before {
+  -webkit-animation: cm-spin 2s infinite;
+       -o-animation: cm-spin 2s infinite;
+          animation: cm-spin 2s infinite;
+}
+
+.context-menu-icon.context-menu-icon--fa {
+  display: list-item;
+  font-family: inherit;
+  line-height: inherit;
+}
+.context-menu-icon.context-menu-icon--fa::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 2em; 
+  font-family: FontAwesome;
+  font-size: 1em;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  color: #2980b9;
+  text-align: center;
+  -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+       -o-transform: translateY(-50%);
+          transform: translateY(-50%);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.context-menu-icon.context-menu-icon--fa.context-menu-hover:before {
+  color: #fff;
+}
+.context-menu-icon.context-menu-icon--fa.context-menu-disabled::before {
+  color: #bbb;
+}
+
+.context-menu-icon.context-menu-icon--fa5 {
+  display: list-item;
+  font-family: inherit;
+  line-height: inherit;
+}
+.context-menu-icon.context-menu-icon--fa5 i, .context-menu-icon.context-menu-icon--fa5 svg {
+  position: absolute;
+  top: .3em; 
+  left: .5em;
+  color: #2980b9;
+}
+.context-menu-icon.context-menu-icon--fa5.context-menu-hover > i, .context-menu-icon.context-menu-icon--fa5.context-menu-hover > svg {
+  color: #fff;
+}
+.context-menu-icon.context-menu-icon--fa5.context-menu-disabled i, .context-menu-icon.context-menu-icon--fa5.context-menu-disabled svg {
+  color: #bbb;
+}
+
+.context-menu-list {
+  position: absolute; 
+  display: inline-block;
+  min-width: 13em;
+  max-width: 26em;
+  padding: .25em 0;
+  margin: .3em;
+  font-family: inherit;
+  font-size: inherit;
+  list-style-type: none;
+  background: #fff;
+  border: 1px solid #bebebe;
+  border-radius: .2em;
+  -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
+          box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
+}
+
+.context-menu-item {
+  position: relative;
+  -webkit-box-sizing: content-box;
+     -moz-box-sizing: content-box;
+          box-sizing: content-box;
+  padding: .2em 2em;
+  color: #2f2f2f;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none; 
+  background-color: #fff;
+}
+
+.context-menu-separator {
+  padding: 0; 
+  margin: .35em 0;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.context-menu-item > label > input,
+.context-menu-item > label > textarea {
+  -webkit-user-select: text;
+     -moz-user-select: text;
+      -ms-user-select: text;
+          user-select: text;
+}
+
+.context-menu-item.context-menu-hover {
+  color: #fff;
+  cursor: pointer; 
+  background-color: #2980b9;
+}
+
+.context-menu-item.context-menu-disabled {
+  color: #bbb;
+  cursor: default; 
+  background-color: #fff;
+}
+
+.context-menu-input.context-menu-hover {
+  color: #2f2f2f; 
+  cursor: default;
+}
+
+.context-menu-submenu:after {
+  position: absolute;
+  top: 50%;
+  right: .5em;
+  z-index: 1; 
+  width: 0;
+  height: 0;
+  content: '';
+  border-color: transparent transparent transparent #2f2f2f;
+  border-style: solid;
+  border-width: .25em 0 .25em .25em;
+  -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+       -o-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+
+/**
+ * Inputs
+ */
+.context-menu-item.context-menu-input {
+  padding: .3em .6em;
+}
+
+/* vertically align inside labels */
+.context-menu-input > label > * {
+  vertical-align: top;
+}
+
+/* position checkboxes and radios as icons */
+.context-menu-input > label > input[type="checkbox"],
+.context-menu-input > label > input[type="radio"] {
+  position: relative;
+  top: .12em; 
+  margin-right: .4em;
+}
+
+.context-menu-input > label {
+  margin: 0;
+}
+
+.context-menu-input > label,
+.context-menu-input > label > input[type="text"],
+.context-menu-input > label > textarea,
+.context-menu-input > label > select {
+  display: block;
+  width: 100%; 
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.context-menu-input > label > textarea {
+  height: 7em;
+}
+
+.context-menu-item > .context-menu-list {
+  top: .3em; 
+  /* re-positioned by js */
+  right: -.3em;
+  display: none;
+}
+
+.context-menu-item.context-menu-visible > .context-menu-list {
+  display: block;
+}
+
+.context-menu-accesskey {
+  text-decoration: underline;
+}
+.dhtmlwindow{
+position: absolute;
+border: 1px solid #cbd5e1;
+border-radius: 10px;
+visibility: hidden;
+background-color: #f8fafc;
+box-shadow: 0 16px 36px rgba(15, 23, 42, .22);
+overflow: hidden;
+}
+
+.drag-handle{ /*CSS for Drag Handle*/
+padding: 9px 10px;
+text-indent: 0;
+font: 650 13px/18px Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+background-color: #f8fafc;
+color: #334155;
+border-bottom: 1px solid #d8e0eb;
+cursor: move;
+overflow: hidden;
+width: auto;
+filter:progid:DXImageTransform.Microsoft.alpha(opacity=100);
+-moz-opacity: 1;
+opacity: 1;
+}
+
+.drag-handle .drag-controls{ /*CSS for controls (min, close etc) within Drag Handle*/
+position: absolute;
+right: 1px;
+top: 2px;
+cursor: hand;
+cursor: pointer;
+}
+
+* html .drag-handle{ /*IE6 and below CSS hack. Width must be set to 100% in order for opaque title bar to render*/
+width: 100%;
+}
+
+
+.drag-contentarea{ /*CSS for Content Display Area div*/
+border-top: 0;
+background-color: #f8fafc;
+color: #334155;
+height: 150px;
+padding: 0;
+overflow: auto;
+}
+
+.drag-statusarea{ /*CSS for Status Bar div (includes resizearea)*/
+border-top: 1px solid #d8e0eb;
+background-color: #f8fafc;
+height: 13px; /*height of resize image*/
+}
+
+
+.drag-resizearea{ /*CSS for Resize Area itself*/
+float: right;
+width: 13px; /*width of resize image*/
+height: 13px; /*height of resize image*/
+cursor: nw-resize;
+font-size: 0;
+}
+
+.osxA {
+  text-decoration: none;
+}
+
+.osxSpan {
+  line-height: 8px;
+  vertical-align: 0%;
+}
+
+.osxButtons {
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  line-height: 0px;
+}
+
+.osxButtons:hover a {
+  visibility: visible;
+}
+
+.osxClose {
+  background: #ff5c5c;
+  font-family: HelveticaNeue, 'Helvetica Neue', 'Lucida Grande', Arial, sans-serif;
+  font-size: 8pt;
+  width: 11px;
+  height: 11px;
+  border: 1px solid #e33e41;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.osxClose:active {
+  background: #c14645;
+  border: 1px solid #b03537;
+}
+
+.osxClose:active .osxClosebutton {
+  color: #4e0002;
+}
+
+.osxClosebutton {
+  color: #820005;
+  visibility: hidden;
+  cursor: default;
+}
+
+.osxMinimize {
+  background: #ffbd4c;
+  font-family: HelveticaNeue, 'Helvetica Neue', 'Lucida Grande', Arial, sans-serif;
+  font-size: 8pt;
+  margin-left: 8px;
+  width: 11px;
+  height: 11px;
+  border: 1px solid #e09e3e;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.osxMinimize:active {
+  background: #c08e38;
+  border: 1px solid #af7c33;
+}
+
+.osxMinimize:active .osxMinimizebutton {
+  color: #5a2607;
+}
+
+.osxMinimizebutton {
+  color: #9a5518;
+  visibility: hidden;
+  cursor: default;
+}
+/* ######### CSS for Shade Tabs. Remove if not using ######### */
+
+.shadetabs{
+padding: 3px 0;
+margin-left: 0;
+margin-top: 1px;
+margin-bottom: 0;
+font: bold 12px Verdana;
+list-style-type: none;
+text-align: left; /*set to left, center, or right to align the menu as desired*/
+}
+
+.shadetabs li{
+display: inline;
+margin: 0;
+}
+
+.shadetabs li a{
+text-decoration: none;
+position: relative;
+z-index: 1;
+padding: 3px 7px;
+margin-right: 3px;
+border: 1px solid #778;
+color: #2d2b2b;
+background: white url(images/shade.gif) top left repeat-x;
+}
+
+.shadetabs li a:visited{
+color: #2d2b2b;
+}
+
+.shadetabs li a:hover{
+text-decoration: underline;
+color: #2d2b2b;
+}
+
+.shadetabs li a.selected{ /*selected main tab style */
+position: relative;
+top: 1px;
+}
+
+.shadetabs li a.selected{ /*selected main tab style */
+background-image: url(images/shadeactive.gif);
+border-bottom-color: white;
+}
+
+.shadetabs li a.selected:hover{ /*selected main tab style */
+text-decoration: none;
+}
+
+.tabcontent{
+display:none;
+}
+
+@media print {
+.tabcontent {
+display:block !important;
+}
+}
+
+/* ######### CSS for Inverted Modern Bricks II Tabs. Remove if not using ######### */
+
+.modernbricksmenu2{
+padding: 0;
+width: 362px;
+border-top: 5px solid #D25A0B; /*Brown color theme*/ 
+background: transparent;
+voice-family: "\"}\"";
+voice-family: inherit;
+}
+
+.modernbricksmenu2 ul{
+margin:0;
+margin-left: 10px; /*margin between first menu item and left browser edge*/
+padding: 0;
+list-style: none;
+}
+
+.modernbricksmenu2 li{
+display: inline;
+margin: 0 2px 0 0;
+padding: 0;
+text-transform:uppercase;
+}
+
+.modernbricksmenu2 a{
+float: left;
+display: block;
+font: bold 11px Arial;
+color: white;
+text-decoration: none;
+margin: 0 1px 0 0; /*Margin between each menu item*/
+padding: 5px 10px;
+background-color: black; /*Brown color theme*/ 
+border-top: 1px solid white;
+}
+
+.modernbricksmenu2 a:hover{
+background-color: #D25A0B; /*Brown color theme*/ 
+color: white;
+}
+
+.modernbricksmenu2 a.selected{ /*currently selected tab*/
+background-color: #D25A0B; /*Brown color theme*/ 
+color: white;
+border-color: #D25A0B; /*Brown color theme*/ 
+}
+
+.tabcontent{
+display:none;
+}
+
+@media print {
+.tabcontent {
+display:block !important;
+}
+}
+
+/* ######### CSS for Indented CSS Tabs. Remove if not using ######### */
+
+
+.indentmenu{
+font: bold 13px Arial;
+width: 100%; /*leave this value as is in most cases*/
+}
+
+.indentmenu ul{
+margin: 0;
+padding: 0;
+float: left;
+/* width: 80%; width of menu*/
+border-top: 1px solid navy; /*navy border*/
+background: black url(images/indentbg.gif) center center repeat-x;
+}
+
+.indentmenu ul li{
+display: inline;
+}
+
+.indentmenu ul li a{
+float: left;
+color: white; /*text color*/
+padding: 5px 11px;
+text-decoration: none;
+border-right: 1px solid navy; /*navy divider between menu items*/
+}
+
+.indentmenu ul li a:visited{
+color: white;
+}
+
+.indentmenu ul li a.selected{
+color: white !important;
+padding-top: 6px; /*shift text down 1px*/
+padding-bottom: 4px;
+background: black url(images/indentbg2.gif) center center repeat-x;
+}
+
+
+.tabcontentstyle{ /*style of tab content oontainer*/
+border: 1px solid gray;
+width: 450px;
+margin-bottom: 1em;
+padding: 10px;
+}
+
+.tabcontent{
+display:none;
+}
+
+@media print {
+.tabcontent {
+display:block !important;
+}
+}
+/***
+Spectrum Colorpicker v1.8.0
+https://github.com/bgrins/spectrum
+Author: Brian Grinstead
+License: MIT
+***/
+
+.sp-container {
+    position:absolute;
+    top:0;
+    left:0;
+    display:inline-block;
+    *display: inline;
+    *zoom: 1;
+    /* https://github.com/bgrins/spectrum/issues/40 */
+    z-index: 9999994;
+    overflow: hidden;
+}
+.sp-container.sp-flat {
+    position: relative;
+}
+
+/* Fix for * { box-sizing: border-box; } */
+.sp-container,
+.sp-container * {
+    -webkit-box-sizing: content-box;
+       -moz-box-sizing: content-box;
+            box-sizing: content-box;
+}
+
+/* http://ansciath.tumblr.com/post/7347495869/css-aspect-ratio */
+.sp-top {
+  position:relative;
+  width: 100%;
+  display:inline-block;
+}
+.sp-top-inner {
+   position:absolute;
+   top:0;
+   left:0;
+   bottom:0;
+   right:0;
+}
+.sp-color {
+    position: absolute;
+    top:0;
+    left:0;
+    bottom:0;
+    right:20%;
+}
+.sp-hue {
+    position: absolute;
+    top:0;
+    right:0;
+    bottom:0;
+    left:84%;
+    height: 100%;
+}
+
+.sp-clear-enabled .sp-hue {
+    top:33px;
+    height: 77.5%;
+}
+
+.sp-fill {
+    padding-top: 80%;
+}
+.sp-sat, .sp-val {
+    position: absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+}
+
+.sp-alpha-enabled .sp-top {
+    margin-bottom: 18px;
+}
+.sp-alpha-enabled .sp-alpha {
+    display: block;
+}
+.sp-alpha-handle {
+    position:absolute;
+    top:-4px;
+    bottom: -4px;
+    width: 6px;
+    left: 50%;
+    cursor: pointer;
+    border: 1px solid black;
+    background: white;
+    opacity: .8;
+}
+.sp-alpha {
+    display: none;
+    position: absolute;
+    bottom: -14px;
+    right: 0;
+    left: 0;
+    height: 8px;
+}
+.sp-alpha-inner {
+    border: solid 1px #333;
+}
+
+.sp-clear {
+    display: none;
+}
+
+.sp-clear.sp-clear-display {
+    background-position: center;
+}
+
+.sp-clear-enabled .sp-clear {
+    display: block;
+    position:absolute;
+    top:0px;
+    right:0;
+    bottom:0;
+    left:84%;
+    height: 28px;
+}
+
+/* Don't allow text selection */
+.sp-container, .sp-replacer, .sp-preview, .sp-dragger, .sp-slider, .sp-alpha, .sp-clear, .sp-alpha-handle, .sp-container.sp-dragging .sp-input, .sp-container button  {
+    -webkit-user-select:none;
+    -moz-user-select: -moz-none;
+    -o-user-select:none;
+    user-select: none;
+}
+
+.sp-container.sp-input-disabled .sp-input-container {
+    display: none;
+}
+.sp-container.sp-buttons-disabled .sp-button-container {
+    display: none;
+}
+.sp-container.sp-palette-buttons-disabled .sp-palette-button-container {
+    display: none;
+}
+.sp-palette-only .sp-picker-container {
+    display: none;
+}
+.sp-palette-disabled .sp-palette-container {
+    display: none;
+}
+
+.sp-initial-disabled .sp-initial {
+    display: none;
+}
+
+
+/* Gradients for hue, saturation and value instead of images.  Not pretty... but it works */
+.sp-sat {
+    background-image: -webkit-gradient(linear,  0 0, 100% 0, from(#FFF), to(rgba(204, 154, 129, 0)));
+    background-image: -webkit-linear-gradient(left, #FFF, rgba(204, 154, 129, 0));
+    background-image: -moz-linear-gradient(left, #fff, rgba(204, 154, 129, 0));
+    background-image: -o-linear-gradient(left, #fff, rgba(204, 154, 129, 0));
+    background-image: -ms-linear-gradient(left, #fff, rgba(204, 154, 129, 0));
+    background-image: linear-gradient(to right, #fff, rgba(204, 154, 129, 0));
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType = 1, startColorstr=#FFFFFFFF, endColorstr=#00CC9A81)";
+    filter : progid:DXImageTransform.Microsoft.gradient(GradientType = 1, startColorstr='#FFFFFFFF', endColorstr='#00CC9A81');
+}
+.sp-val {
+    background-image: -webkit-gradient(linear, 0 100%, 0 0, from(#000000), to(rgba(204, 154, 129, 0)));
+    background-image: -webkit-linear-gradient(bottom, #000000, rgba(204, 154, 129, 0));
+    background-image: -moz-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));
+    background-image: -o-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));
+    background-image: -ms-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));
+    background-image: linear-gradient(to top, #000, rgba(204, 154, 129, 0));
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#00CC9A81, endColorstr=#FF000000)";
+    filter : progid:DXImageTransform.Microsoft.gradient(startColorstr='#00CC9A81', endColorstr='#FF000000');
+}
+
+.sp-hue {
+    background: -moz-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    background: -ms-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    background: -o-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    background: -webkit-gradient(linear, left top, left bottom, from(#ff0000), color-stop(0.17, #ffff00), color-stop(0.33, #00ff00), color-stop(0.5, #00ffff), color-stop(0.67, #0000ff), color-stop(0.83, #ff00ff), to(#ff0000));
+    background: -webkit-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    background: linear-gradient(to bottom, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+}
+
+/* IE filters do not support multiple color stops.
+   Generate 6 divs, line them up, and do two color gradients for each.
+   Yes, really.
+ */
+.sp-1 {
+    height:17%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0000', endColorstr='#ffff00');
+}
+.sp-2 {
+    height:16%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffff00', endColorstr='#00ff00');
+}
+.sp-3 {
+    height:17%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ff00', endColorstr='#00ffff');
+}
+.sp-4 {
+    height:17%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ffff', endColorstr='#0000ff');
+}
+.sp-5 {
+    height:16%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0000ff', endColorstr='#ff00ff');
+}
+.sp-6 {
+    height:17%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff00ff', endColorstr='#ff0000');
+}
+
+.sp-hidden {
+    display: none !important;
+}
+
+/* Clearfix hack */
+.sp-cf:before, .sp-cf:after { content: ""; display: table; }
+.sp-cf:after { clear: both; }
+.sp-cf { *zoom: 1; }
+
+/* Mobile devices, make hue slider bigger so it is easier to slide */
+@media (max-device-width: 480px) {
+    .sp-color { right: 40%; }
+    .sp-hue { left: 63%; }
+    .sp-fill { padding-top: 60%; }
+}
+.sp-dragger {
+   border-radius: 5px;
+   height: 5px;
+   width: 5px;
+   border: 1px solid #fff;
+   background: #000;
+   cursor: pointer;
+   position:absolute;
+   top:0;
+   left: 0;
+}
+.sp-slider {
+    position: absolute;
+    top:0;
+    cursor:pointer;
+    height: 3px;
+    left: -1px;
+    right: -1px;
+    border: 1px solid #000;
+    background: white;
+    opacity: .8;
+}
+
+/*
+Theme authors:
+Here are the basic themeable display options (colors, fonts, global widths).
+See http://bgrins.github.io/spectrum/themes/ for instructions.
+*/
+
+.sp-container {
+    border-radius: 0;
+    background-color: #ECECEC;
+    border: solid 1px #f0c49B;
+    padding: 0;
+}
+.sp-container, .sp-container button, .sp-container input, .sp-color, .sp-hue, .sp-clear {
+    font: normal 12px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.sp-top {
+    margin-bottom: 3px;
+}
+.sp-color, .sp-hue, .sp-clear {
+    border: solid 1px #666;
+}
+
+/* Input */
+.sp-input-container {
+    float:right;
+    width: 100px;
+    margin-bottom: 4px;
+}
+.sp-initial-disabled  .sp-input-container {
+    width: 100%;
+}
+.sp-input {
+   font-size: 12px !important;
+   border: 1px inset;
+   padding: 4px 5px;
+   margin: 0;
+   width: 100%;
+   background:transparent;
+   border-radius: 3px;
+   color: #222;
+}
+.sp-input:focus  {
+    border: 1px solid orange;
+}
+.sp-input.sp-validation-error {
+    border: 1px solid red;
+    background: #fdd;
+}
+.sp-picker-container , .sp-palette-container {
+    float:left;
+    position: relative;
+    padding: 10px;
+    padding-bottom: 300px;
+    margin-bottom: -290px;
+}
+.sp-picker-container {
+    width: 172px;
+    border-left: solid 1px #fff;
+}
+
+/* Palettes */
+.sp-palette-container {
+    border-right: solid 1px #ccc;
+}
+
+.sp-palette-only .sp-palette-container {
+    border: 0;
+}
+
+.sp-palette .sp-thumb-el {
+    display: block;
+    position:relative;
+    float:left;
+    width: 24px;
+    height: 15px;
+    margin: 3px;
+    cursor: pointer;
+    border:solid 2px transparent;
+}
+.sp-palette .sp-thumb-el:hover, .sp-palette .sp-thumb-el.sp-thumb-active {
+    border-color: orange;
+}
+.sp-thumb-el {
+    position:relative;
+}
+
+/* Initial */
+.sp-initial {
+    float: left;
+    border: solid 1px #333;
+}
+.sp-initial span {
+    width: 30px;
+    height: 25px;
+    border:none;
+    display:block;
+    float:left;
+    margin:0;
+}
+
+.sp-initial .sp-clear-display {
+    background-position: center;
+}
+
+/* Buttons */
+.sp-palette-button-container,
+.sp-button-container {
+    float: right;
+}
+
+/* Replacer (the little preview div that shows up instead of the <input>) */
+.sp-replacer {
+    margin:0;
+    overflow:hidden;
+    cursor:pointer;
+    padding: 4px;
+    display:inline-block;
+    *zoom: 1;
+    *display: inline;
+    border: solid 1px #91765d;
+    background: #eee;
+    color: #333;
+    vertical-align: middle;
+}
+.sp-replacer:hover, .sp-replacer.sp-active {
+    border-color: #F0C49B;
+    color: #111;
+}
+.sp-replacer.sp-disabled {
+    cursor:default;
+    border-color: silver;
+    color: silver;
+}
+.sp-dd {
+    padding: 2px 0;
+    height: 16px;
+    line-height: 16px;
+    float:left;
+    font-size:10px;
+}
+.sp-preview {
+    position:relative;
+    width:25px;
+    height: 20px;
+    border: solid 1px #222;
+    margin-right: 5px;
+    float:left;
+    z-index: 0;
+}
+
+.sp-palette {
+    *width: 220px;
+    max-width: 220px;
+}
+.sp-palette .sp-thumb-el {
+    width:16px;
+    height: 16px;
+    margin:2px 1px;
+    border: solid 1px #d0d0d0;
+}
+
+.sp-container {
+    padding-bottom:0;
+}
+
+
+/* Buttons: http://hellohappy.org/css3-buttons/ */
+.sp-container button {
+  background-color: #eeeeee;
+  background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -ms-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -o-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: linear-gradient(to bottom, #eeeeee, #cccccc);
+  border: 1px solid #ccc;
+  border-bottom: 1px solid #bbb;
+  border-radius: 3px;
+  color: #333;
+  font-size: 14px;
+  line-height: 1;
+  padding: 5px 4px;
+  text-align: center;
+  text-shadow: 0 1px 0 #eee;
+  vertical-align: middle;
+}
+.sp-container button:hover {
+    background-color: #dddddd;
+    background-image: -webkit-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: -moz-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: -ms-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: -o-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: linear-gradient(to bottom, #dddddd, #bbbbbb);
+    border: 1px solid #bbb;
+    border-bottom: 1px solid #999;
+    cursor: pointer;
+    text-shadow: 0 1px 0 #ddd;
+}
+.sp-container button:active {
+    border: 1px solid #aaa;
+    border-bottom: 1px solid #888;
+    -webkit-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+    -moz-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+    -ms-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+    -o-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+    box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+}
+.sp-cancel {
+    font-size: 11px;
+    color: #d93f3f !important;
+    margin:0;
+    padding:2px;
+    margin-right: 5px;
+    vertical-align: middle;
+    text-decoration:none;
+
+}
+.sp-cancel:hover {
+    color: #d93f3f !important;
+    text-decoration: underline;
+}
+
+
+.sp-palette span:hover, .sp-palette span.sp-thumb-active {
+    border-color: #000;
+}
+
+.sp-preview, .sp-alpha, .sp-thumb-el {
+    position:relative;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAAGUlEQVQYV2M4gwH+YwCGIasIUwhT25BVBADtzYNYrHvv4gAAAABJRU5ErkJggg==);
+}
+.sp-preview-inner, .sp-alpha-inner, .sp-thumb-inner {
+    display:block;
+    position:absolute;
+    top:0;left:0;bottom:0;right:0;
+}
+
+.sp-palette .sp-thumb-inner {
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+}
+
+.sp-palette .sp-thumb-light.sp-thumb-active .sp-thumb-inner {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIVJREFUeNpiYBhsgJFMffxAXABlN5JruT4Q3wfi/0DsT64h8UD8HmpIPCWG/KemIfOJCUB+Aoacx6EGBZyHBqI+WsDCwuQ9mhxeg2A210Ntfo8klk9sOMijaURm7yc1UP2RNCMbKE9ODK1HM6iegYLkfx8pligC9lCD7KmRof0ZhjQACDAAceovrtpVBRkAAAAASUVORK5CYII=);
+}
+
+.sp-palette .sp-thumb-dark.sp-thumb-active .sp-thumb-inner {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAMdJREFUOE+tkgsNwzAMRMugEAahEAahEAZhEAqlEAZhEAohEAYh81X2dIm8fKpEspLGvudPOsUYpxE2BIJCroJmEW9qJ+MKaBFhEMNabSy9oIcIPwrB+afvAUFoK4H0tMaQ3XtlrggDhOVVMuT4E5MMG0FBbCEYzjYT7OxLEvIHQLY2zWwQ3D+9luyOQTfKDiFD3iUIfPk8VqrKjgAiSfGFPecrg6HN6m/iBcwiDAo7WiBeawa+Kwh7tZoSCGLMqwlSAzVDhoK+6vH4G0P5wdkAAAAASUVORK5CYII=);
+}
+
+.sp-clear-display {
+    background-repeat:no-repeat;
+    background-position: center;
+    background-image: url(data:image/gif;base64,R0lGODlhFAAUAPcAAAAAAJmZmZ2dnZ6enqKioqOjo6SkpKWlpaampqenp6ioqKmpqaqqqqurq/Hx8fLy8vT09PX19ff39/j4+Pn5+fr6+vv7+wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAP8ALAAAAAAUABQAAAihAP9FoPCvoMGDBy08+EdhQAIJCCMybCDAAYUEARBAlFiQQoMABQhKUJBxY0SPICEYHBnggEmDKAuoPMjS5cGYMxHW3IiT478JJA8M/CjTZ0GgLRekNGpwAsYABHIypcAgQMsITDtWJYBR6NSqMico9cqR6tKfY7GeBCuVwlipDNmefAtTrkSzB1RaIAoXodsABiZAEFB06gIBWC1mLVgBa0AAOw==);
+}
+div.JS9BlendContainer {
+    padding: 2px;
+}
+
+div.JS9BlendImage {
+    margin: 5px;
+    background: #E9E9E9;
+    overflow: auto;
+}
+
+div.JS9BlendImageInactive {
+    padding: 10px;
+    border: 1px solid black;
+}
+
+div.JS9BlendImageActive {
+    padding: 9px;
+    border: 2px solid #00F000;
+}
+
+div.JS9BlendHeader {
+    border: 0px solid black;
+    background: #E9E9E9;
+    padding: 0px;
+    margin-left: 15px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 0px;
+}
+
+#blendModeSelect {
+    width: 110px;
+}
+
+#blendModeSelect option {
+    width: 110px;
+}
+
+#blendOpacitySelect {
+    width: 80px;
+}
+
+#blendOpacitySelect option {
+    width: 80px;
+}
+
+#blendFile {
+    float: right;
+}
+
+#blendNoFile {
+    margin-left: 15px;
+}
+
+div.JS9BlinkContainer {
+    padding: 2px;
+}
+
+div.JS9BlinkImage {
+    margin: 5px;
+    background: #E9E9E9;
+    overflow: auto;
+}
+
+div.JS9BlinkImageInactive {
+    padding: 10px;
+    border: 1px solid black;
+}
+
+div.JS9BlinkImageActive {
+    padding: 9px;
+    border: 2px solid #00F000;
+}
+
+div.JS9BlinkHeader {
+    border: 0px solid black;
+    background: #E9E9E9;
+    padding: 0px;
+    margin-left: 15px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 0px;
+}
+
+#blinkModeSelect {
+    width: 110px;
+}
+
+#blinkModeSelect option {
+    width: 110px;
+}
+
+#blinkOpacitySelect {
+    width: 80px;
+}
+
+#blinkOpacitySelect option {
+    width: 80px;
+}
+
+#blinkFile {
+    float: right;
+}
+
+#blinkNoFile {
+    margin-left: 15px;
+}
+
+div.JS9CmapsContainer {
+    padding: 2px;
+    overflow: auto;
+}
+
+div.JS9CmapsHeader {
+    border: 0px solid black;
+    background: #E9E9E9;
+    padding: 0px;
+    margin-left: 15px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 0px;
+}
+
+div.JS9CmapsImage {
+    margin: 5px;
+    background: #E9E9E9;
+    overflow: auto;
+}
+
+div.JS9CmapsImageInactive {
+    padding: 10px;
+    border: 1px solid black;
+}
+
+div.JS9CmapsImageActive {
+    padding: 9px;
+    border: 2px solid #00F000;
+}
+
+div.JS9cmapsNoFile {
+    padding: 15px;
+}
+.JS9ColorContainer {
+    padding: 5px;
+}
+
+.JS9ColorButton {
+    margin-top: 1px;
+    width: 105px;
+}
+
+.JS9ColorSelect {
+    width: 100px;
+}
+
+.JS9ColorInput {
+    padding: 1px 1px 1px 3px;
+    width: 95px;
+}
+
+.JS9ColorCol1 {
+    position: absolute;
+    top:   0;
+    left:  0;
+}
+
+.JS9ColorCol2 {
+    position: absolute;
+    top:   0;
+    left:  110px;
+}
+
+.JS9ColorCol3 {
+    position: absolute;
+    top:   0;
+    left:  220px;
+}
+
+.JS9ColorCol4 {
+    position: absolute;
+    top:   0;
+    left:  330px;
+}
+
+.JS9ColorLinegroup {
+    float: left;
+    position: relative;
+    top:   0px;
+    left:  0px;
+    width: 95%;
+    padding: 5px;
+    margin: 5px;
+}
+div.JS9ColorbarContainer {
+    box-sizing: border-box;
+    width: 100%;
+    overflow: hidden;
+}
+
+canvas.JS9ColorbarCanvas {
+    display: block;
+    box-sizing: border-box;
+    border: 1px solid var(--js9-ui-border, #334155);
+}
+
+canvas.JS9ColorbarTextCanvas {
+    display: block;
+    box-sizing: border-box;
+    background-color: var(--js9-ui-bg, #f8fafc);
+}
+.JS9CubeContainer {
+    padding: 5px;
+}
+
+.JS9CubeLinegroup {
+    float: left;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 95%;
+    padding: 5px;
+    margin: 5px;
+}
+
+.JS9CubeRangeLine {
+  font-size: 9pt;
+}
+
+.JS9CubeRange {
+  vertical-align: middle;
+}
+
+.JS9CubeValue {
+  vertical-align: top;
+  text-align: center;
+}
+
+.JS9CubeValue2 {
+  vertical-align: top;
+  text-align: center;
+}
+
+.JS9CubeOrder {
+  vertical-align: top;
+}
+
+div.JS9DivsContainer {
+    padding: 2px;
+}
+
+div.JS9DivsHeader {
+    border: 0px solid black;
+    background: #E9E9E9;
+    padding: 10px;
+    margin-left: 15px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 0px;
+}
+
+div.JS9DivsDiv {
+    margin: 5px;
+    background: #E9E9E9;
+    overflow: auto;
+    padding: 10px;
+    border: 1px solid black;
+}
+
+span.JS9DivsSpan {
+    float: right;
+    margin-right: 10px;
+}
+
+span.JS9NoDivs {
+    margin-left: 15px;
+}
+
+.JS9FiltersContainer {
+    padding: 5px;
+}
+
+.JS9FiltersLineheader {
+}
+
+.JS9FiltersLinegroup {
+    float: left;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 95%;
+    height: 20px;
+    padding: 0px;
+    margin: 1px;
+}
+
+.JS9FiltersHeader {
+    padding-left: 12px;
+    padding-top: 5px;
+    padding-bottom: 0px;
+    padding-right: 5px;
+}
+
+.JS9FiltersText {
+    float: right;
+}
+
+.JS9FiltersButton {
+    padding: 0px;
+    margin: 2px;
+    width: 80px;
+    float: left;
+    outline: none;
+}
+
+.JS9FiltersUndoButton {
+    padding: 0px;
+    margin-top: 15px;
+    margin-right: 2px;
+    margin-bottom: 2px;
+    margin-left: 2px;
+    width: 80px;
+    float: left;
+    outline: none;
+}
+
+.JS9FiltersValue {
+    padding: 1px;
+    text-align: right; 
+}
+
+.JS9FiltersCol1 {
+    position: absolute;
+    float: right;
+    top: 0;
+    left: 5;
+    width: 80px;
+}
+
+.JS9FiltersCol2 {
+    position: absolute;
+    top: 0;
+    left: 100px;
+}
+
+.JS9FiltersCol3 {
+    position: absolute;
+    top: 0;
+    left:  250px;
+    width: 40px;
+}
+
+.JS9FiltersRange {
+    width: 130px;
+}
+.JS9CustomizeForm { display: flex; box-sizing: border-box; min-width: 0; flex-direction: column; gap: 12px; font-family: Inter, system-ui, sans-serif; padding: 14px; color: var(--js9-ui-text, #1e293b); }
+.JS9CustomizeIntro { margin: 0; color: var(--js9-ui-muted, #64748b); font-size: 12px; line-height: 1.45; }
+.JS9CustomizeSection { min-width: 0; margin: 0; padding: 12px; border: 1px solid var(--js9-ui-border, #dbe3ef); border-radius: 10px; background: var(--js9-ui-surface, #ffffff); }
+.JS9CustomizeSectionTitle { margin: 0 0 10px; color: var(--js9-ui-text, #334155); font-size: 13px; font-weight: 750; line-height: 1.2; }
+.JS9CustomizeGrid, .JS9CustomizeSizeGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: end; }
+.JS9CustomizeGridThree { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.JS9CustomizeGrid label, .JS9CustomizeSizeGrid label { display: grid; min-width: 0; gap: 5px; margin: 0; color: var(--js9-ui-muted, #64748b); font-size: 11px; }
+.JS9CustomizeGrid label > span, .JS9CustomizeSizeGrid label > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.JS9CustomizeForm select, .JS9CustomizeForm input { width: 100%; min-width: 0; margin: 0; border: 1px solid var(--js9-ui-border, #cbd5e1); border-radius: 6px; padding: 4px 6px; color: var(--js9-ui-text, #334155); background: var(--js9-ui-surface, #fff); }
+.JS9CustomizeForm input[type="checkbox"] { accent-color: var(--js9-accent, #2563eb); }
+.JS9CustomizeForm input[type="color"] { height: 30px; padding: 2px; }
+.JS9CustomizeForm button { border: 0; border-radius: 7px; padding: 7px 10px; color: var(--js9-accent-contrast, #fff); background: var(--js9-accent, #2563eb); font: inherit; font-size: 12px; font-weight: 650; cursor: pointer; }
+.JS9CustomizeToggleGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+.JS9CustomizeToggleGrid label { display: flex; align-items: center; gap: 6px; min-width: 0; margin: 0; padding: 7px; border: 1px solid var(--js9-ui-border, #dbe3ef); border-radius: 7px; color: var(--js9-ui-text, #334155); background: var(--js9-ui-surface, #fff); font-size: 12px; }
+.JS9CustomizeToggleGrid input { width: auto; flex: 0 0 auto; }
+.JS9CustomizeToggleGrid span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.JS9CustomizeFieldHint { margin: 0 0 8px; color: var(--js9-ui-muted, #64748b); font-size: 11px; line-height: 1.35; }
+.JS9CustomizeToolbarList { max-height: 190px; overflow-y: auto; border: 1px solid var(--js9-ui-border, #dbe3ef); border-radius: 7px; background: var(--js9-ui-surface, #fff); }
+.JS9CustomizeToolbarItem { display: flex; align-items: center; justify-content: space-between; min-height: 32px; padding: 3px 5px 3px 8px; border-bottom: 1px solid var(--js9-ui-border, #eef2f7); }
+.JS9CustomizeToolbarItem:last-child { border-bottom: 0; }
+.JS9CustomizeToolbarItem label { display: flex; align-items: center; min-width: 0; gap: 6px; margin: 0; font-size: 12px; }
+.JS9CustomizeToolbarItem input { width: auto; flex: 0 0 auto; }
+.JS9CustomizeToolbarMove { display: inline-flex; gap: 3px; }
+.JS9CustomizeToolbarMove button { min-width: 25px; padding: 3px 5px; }
+.JS9CustomizeSizeGrid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; }
+.JS9CustomizeSizeGrid button { min-height: 30px; white-space: nowrap; }
+.JS9CustomizeActions { display: flex; justify-content: flex-end; }
+@media (max-width: 390px) { .JS9CustomizeGridThree, .JS9CustomizeToggleGrid { grid-template-columns: 1fr; } .JS9CustomizeSizeGrid { grid-template-columns: 1fr 1fr; } .JS9CustomizeSizeGrid button { grid-column: 1 / -1; } }
+html[data-js9-active-theme="dark"] .JS9CustomizeSection { border-color: #475569; background: #1f2937; }
+html[data-js9-active-theme="dark"] .JS9CustomizeSectionTitle { color: #f8fafc; }
+html[data-js9-active-theme="midnight"] .JS9CustomizeSection { border-color: #334155; background: #172554; }
+html[data-js9-active-theme="midnight"] .JS9CustomizeSectionTitle { color: #dbeafe; }
+html[data-js9-active-theme="contrast"] .JS9CustomizeSection { border-color: #ffffff; background: #111111; }
+html[data-js9-active-theme="contrast"] .JS9CustomizeSectionTitle { color: #ffffff; }
+[data-js9-theme] .JS9MenubarContainer,
+[data-js9-theme] .JS9MenubarContainer-classic,
+[data-js9-theme] .JS9MenubarContainer-flat,
+[data-js9-theme] .JS9MenubarContainer-border { background: var(--js9-menu-background) !important; color: var(--js9-menu-text); }
+[data-js9-theme] .JS9MenubarContainer .JS9Button,
+[data-js9-theme] .JS9MenubarContainer .JS9Button-classic,
+[data-js9-theme] .JS9MenubarContainer .JS9Button-flat,
+[data-js9-theme] .JS9MenubarContainer .JS9Button-border { color: var(--js9-menu-text); font-size: var(--js9-menu-font-size); text-shadow: none; }
+[data-js9-theme] .JS9MenubarContainer .JS9Button:hover,
+[data-js9-theme] .JS9MenubarContainer .JS9Button-classic:hover,
+[data-js9-theme] .JS9MenubarContainer .JS9Button-flat:hover,
+[data-js9-theme] .JS9MenubarContainer .JS9Button-border:hover { background: color-mix(in srgb, var(--js9-accent) 16%, transparent); border-color: color-mix(in srgb, var(--js9-accent) 35%, transparent); }
+[data-js9-theme] .JS9ToolbarContainer { border-color: color-mix(in srgb, var(--js9-accent) 32%, #cbd5e1); }
+[data-js9-theme] .JS9ToolbarImageButton:hover,
+[data-js9-theme] .JS9ToolbarButtonButton:hover { background: color-mix(in srgb, var(--js9-accent) 14%, transparent); border-color: color-mix(in srgb, var(--js9-accent) 35%, transparent); }
+[data-js9-theme] .JS9ToolbarImageButton:focus,
+[data-js9-theme] .JS9ToolbarButtonButton:focus { outline-color: var(--js9-accent, #2563eb); }
+/* Never theme .JS9Container: it is the image canvas stacking layer. */
+[data-js9-theme="dark"].JS9ToolbarContainer, [data-js9-theme="dark"] .JS9ToolbarContainer, [data-js9-theme="dark"].JS9Plugin, [data-js9-theme="dark"] .JS9Plugin { background: #1f2937; color: #f9fafb; }
+[data-js9-theme="midnight"].JS9ToolbarContainer, [data-js9-theme="midnight"] .JS9ToolbarContainer, [data-js9-theme="midnight"].JS9Plugin, [data-js9-theme="midnight"] .JS9Plugin { background: #0b1020; color: #dbeafe; }
+[data-js9-theme="contrast"].JS9ToolbarContainer, [data-js9-theme="contrast"] .JS9ToolbarContainer, [data-js9-theme="contrast"].JS9Plugin, [data-js9-theme="contrast"] .JS9Plugin { background: #000; color: #fff; }
+/* Voyager toolbar assets are black line-art SVGs. Give both text and image
+ * tools an explicit dark button surface. The image itself stays transparent,
+ * so inversion turns only the artwork light instead of inverting its button. */
+:is([data-js9-theme="dark"], [data-js9-theme="midnight"], [data-js9-theme="contrast"]) .JS9ToolbarButtonDiv,
+html:is([data-js9-active-theme="dark"], [data-js9-active-theme="midnight"], [data-js9-active-theme="contrast"]) .JS9ToolbarButtonDiv {
+    border: 1px solid #52657f;
+    border-radius: 8px;
+    background: #263449;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 1px 1px rgba(0, 0, 0, .24);
+}
+:is([data-js9-theme="dark"], [data-js9-theme="midnight"], [data-js9-theme="contrast"]) .JS9ToolbarImageButton,
+html:is([data-js9-active-theme="dark"], [data-js9-active-theme="midnight"], [data-js9-active-theme="contrast"]) .JS9ToolbarImageButton {
+    background: transparent !important;
+    border-color: transparent !important;
+    filter: invert(1);
+}
+:is([data-js9-theme="dark"], [data-js9-theme="midnight"], [data-js9-theme="contrast"]) .JS9ToolbarButtonButton,
+html:is([data-js9-active-theme="dark"], [data-js9-active-theme="midnight"], [data-js9-active-theme="contrast"]) .JS9ToolbarButtonButton {
+    color: #f1f5f9;
+    background: transparent;
+    border-color: transparent;
+}
+:is([data-js9-theme="dark"], [data-js9-theme="midnight"], [data-js9-theme="contrast"]) .JS9ToolbarButtonDiv:has(.JS9ToolbarImageButton:hover),
+:is([data-js9-theme="dark"], [data-js9-theme="midnight"], [data-js9-theme="contrast"]) .JS9ToolbarButtonDiv:has(.JS9ToolbarButtonButton:hover),
+html:is([data-js9-active-theme="dark"], [data-js9-active-theme="midnight"], [data-js9-active-theme="contrast"]) .JS9ToolbarButtonDiv:has(.JS9ToolbarImageButton:hover),
+html:is([data-js9-active-theme="dark"], [data-js9-active-theme="midnight"], [data-js9-active-theme="contrast"]) .JS9ToolbarButtonDiv:has(.JS9ToolbarButtonButton:hover) {
+    border-color: #7dd3fc;
+    background: #334b66;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, .16), inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+[data-js9-theme] .JS9Menubar, [data-js9-theme] .JS9ToolbarContainer, [data-js9-theme].JS9Menubar, [data-js9-theme].JS9ToolbarContainer { border-color: var(--js9-accent, #2563eb); }
+[data-js9-theme] .JS9ToolbarButtonButton:focus, [data-js9-theme] .JS9ToolbarImageButton:focus { outline-color: var(--js9-accent, #2563eb); }
+.JS9RegionStats { box-sizing: border-box; min-height: 100%; padding: 14px; color: #dbeafe; background: linear-gradient(145deg, #0b1220, #15233b); font-family: Inter, system-ui, sans-serif; }
+.JS9RegionStats header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding-bottom: 11px; border-bottom: 1px solid rgba(148, 163, 184, .22); }
+.JS9RegionStats h3 { margin: 2px 0 0; color: #f8fafc; font-size: 17px; letter-spacing: -.02em; }
+.JS9RegionStatsEyebrow { color: #7dd3fc; font-size: 10px; font-weight: 750; letter-spacing: .1em; }
+.JS9RegionStatsBadge { border: 1px solid rgba(125, 211, 252, .48); border-radius: 999px; padding: 4px 7px; color: #bae6fd; font-size: 10px; font-weight: 750; letter-spacing: .06em; }
+.JS9RegionStatsHint { margin: 10px 0; color: #a5b4cf; font-size: 12px; line-height: 1.45; }
+.JS9RegionStatsGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+.JS9RegionStatsMetric { min-width: 0; padding: 8px; border: 1px solid rgba(148, 163, 184, .16); border-radius: 9px; background: rgba(15, 23, 42, .58); }
+.JS9RegionStatsMetric span, .JS9RegionStatsMetric small { display: block; overflow: hidden; color: #94a3b8; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.JS9RegionStatsMetric strong { display: block; overflow: hidden; margin: 2px 0; color: #f8fafc; font-size: 14px; letter-spacing: -.02em; text-overflow: ellipsis; white-space: nowrap; }
+.JS9RegionStatsCalibration { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(106px, auto); gap: 7px; align-items: end; margin: 12px 0; padding: 10px; border: 1px solid rgba(56, 189, 248, .25); border-radius: 10px; background: rgba(14, 116, 144, .13); }
+.JS9RegionStatsFormTitle { grid-column: 1 / -1; color: #bae6fd; font-size: 12px; font-weight: 700; }
+.JS9RegionStatsCalibration label { display: grid; gap: 4px; color: #cbd5e1; font-size: 10px; }
+.JS9RegionStatsCalibration input { width: 100%; box-sizing: border-box; border: 1px solid #475569; border-radius: 6px; padding: 6px; color: #f8fafc; background: #0f172a; font: inherit; font-size: 12px; }
+.JS9RegionStatsCalibration label span { color: #94a3b8; font-size: 10px; }
+.JS9RegionStatsCalibration button { display: block; grid-column: auto; width: 100%; min-width: 106px; min-height: 34px; border: 0; border-radius: 7px; padding: 7px 9px; color: #082f49; background: #7dd3fc; font: inherit; font-size: 11px; font-weight: 750; cursor: pointer; white-space: nowrap; }
+.JS9RegionStatsMagnitude { padding-top: 10px; border-top: 1px solid rgba(148, 163, 184, .22); }
+.JS9RegionStatsMagnitudeRow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+.JS9RegionStatsRate { margin-top: 8px; color: #94a3b8; font-size: 10px; text-align: right; }
+.JS9RegionStatsRate strong { margin-left: 4px; color: #f8fafc; font-size: 11px; }
+.JS9RegionStatsFormula { margin: 10px 0 0; color: #93c5fd; font-size: 11px; text-align: center; }
+@media (max-width: 360px) { .JS9RegionStatsCalibration, .JS9RegionStatsMagnitudeRow { grid-template-columns: 1fr; } .JS9RegionStatsCalibration button { width: 100%; } }
+.JS9RegionDialogTabs { width: 100%; min-width: 390px; }
+.JS9RegionDialogTabbar { display: flex; gap: 4px; margin: 0 0 10px; padding: 3px; border-radius: 8px; background: #e2e8f0; }
+.JS9RegionDialogTab { flex: 1; border: 0; border-radius: 6px; padding: 6px 9px; color: #475569; background: transparent; font: 600 12px Inter, system-ui, sans-serif; cursor: pointer; }
+.JS9RegionDialogTab.active { color: #075985; background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, .16); }
+.JS9RegionDialogStats { min-height: 400px; border-radius: 10px; overflow: hidden; }
+.JS9RegionDialogStats[hidden], .JS9RegionDialogEdit[hidden] { display: none !important; }
+div.JS9ImarithLinegroup {
+    float: left;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 95%;
+    padding: 5px;
+    margin: 5px;
+}
+
+div.JS9ImarithContainer {
+    padding: 5px;
+}
+div.JS9KeyboardContainer {
+    padding: 0px;
+    margin:  0px;
+}
+
+div.JS9KeyboardActionContainer {
+    padding: 0px;
+    margin:  0px;
+}
+
+div.JS9KeyboardItem {
+    padding: 0px;
+    margin:  0px;
+}
+
+div.JS9KeyboardText {
+    margin: 0px;
+    padding: 1px 1px 1px 30px;
+    background: #E9E9E9;
+    overflow: auto;
+    border: 1px solid transparent;
+    display: inline-block;
+    width: 120px;
+}
+
+div.JS9KeyboardAction {
+    margin:  0px 0px 5px 0px;
+    padding: 1px;
+    background: #E9E9E9;
+    overflow: auto;
+    border: 1px solid transparent;
+    display: inline-block;
+}
+
+div.JS9KeyboardHeader, div.JS9KeyboardFooter {
+    background: #E9E9E9;
+    text-align: left;
+    padding: 0px;
+    margin-left: 15px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 0px;
+    border: 1px solid transparent;
+}
+
+button.JS9KeyboardButton {
+    margin: 0px 0px 5px 0px;
+}
+
+div.JS9LayersContainer {
+    padding: 2px;
+}
+
+div.JS9LayersHeader {
+    border: 0px solid black;
+    background: #E9E9E9;
+    padding: 0px;
+    margin-left: 15px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 0px;
+}
+
+div.JS9LayersLayer {
+    margin: 5px;
+    background: #E9E9E9;
+    overflow: auto;
+}
+
+div.JS9LayersLayerInactive {
+    padding: 10px;
+    border: 1px solid black;
+}
+
+div.JS9LayersLayerActive {
+    padding: 9px;
+    border: 2px solid #00F000;
+}
+
+span.JS9LayersSpan {
+    float: right;
+    margin-right: 10px;
+}
+
+span.JS9NoLayers {
+    margin-left: 15px;
+}
+
+.JS9MefContainer {
+    padding: 10px;
+    overflow: auto;
+}
+
+.JS9MefExtension {
+    margin: 5px;
+    background: #E9E9E9;
+    overflow: auto;
+    font-size: 10pt;
+}
+
+.JS9MefHeader {
+    margin: 5px;
+    background: #E9E9E9;
+}
+
+.JS9MefInput {
+    margin: 5px;
+    background: #E9E9E9;
+}
+
+.JS9MefExtensionInactive {
+    padding: 0px;
+    border: 1px solid black;
+}
+
+.JS9MefExtensionActive {
+    padding: 0px;
+    border: 2px solid #00F000;
+}
+
+span.JS9MefStrike{
+    font-weight:bold; /*set line weight here*/
+    color:red;
+    text-decoration:line-through;
+}
+
+span.JS9MefStrike>span {
+    font-weight:normal;
+    color: black;
+}div.JS9MouseTouchContainer {
+    padding: 2px;
+}
+
+div.JS9MouseTouchText {
+    margin: 5px;
+    padding: 6px 6px 6px 10px;
+    background: #E9E9E9;
+    overflow: auto;
+    border: 1px solid transparent;
+}
+
+div.JS9MouseTouchAction {
+    margin: 5px;
+    padding: 6px;
+    background: #E9E9E9;
+    overflow: auto;
+    border: 1px solid black;
+}
+
+div.JS9MouseTouchHeader, div.JS9MouseTouchFooter {
+    background: #E9E9E9;
+    text-align: center;
+    padding: 0px;
+    margin-left: 15px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 0px;
+    border: 1px solid transparent;
+}
+.JS9ScaleContainer {
+    padding: 5px;
+}
+
+.JS9ScaleLinegroup {
+    float: left;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 95%;
+    padding: 5px;
+    margin: 5px;
+}
+
+.JS9ScalePlot {
+    border: 1px black solid;
+}
+div.JS9SeparateContainer {
+    padding: 2px;
+}
+
+div.JS9SeparateImage {
+    margin: 5px;
+    background: #E9E9E9;
+    overflow: auto;
+}
+
+div.JS9SeparateImageInactive {
+    padding: 10px;
+    border: 1px solid black;
+}
+
+div.JS9SeparateImageActive {
+    padding: 9px;
+    border: 2px solid #00F000;
+}
+
+div.JS9SeparateHeader {
+    border: 0px solid black;
+    background: #E9E9E9;
+    padding: 0px;
+    margin-left: 15px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 0px;
+}
+
+input.separateButton1 {
+    position: relative;
+    width: 120px;
+    left: 10px;
+}
+
+input.separateButton2 {
+    position: relative;
+    width: 90px;
+    left: 30px;
+}
+
+select.separateLayoutSelect {
+   margin-right: 5px;
+}
+
+#separateFile {
+    float: right;
+}
+
+#separateNoFile {
+    margin-left: 15px;
+}
+
+/* overflow scrolling technique: https://stackoverflow.com/questions/9672176/prevent-floated-divs-from-wrapping-to-new-line */
+/* this doesn't work on Linux Electron: it puts up arrows that get in the way */
+.JS9Statusbar {
+    /* overflow-y: scroll; */
+}
+
+.JS9StatusbarContainer {
+    background-color: #E9E9E9;
+    padding-left: 4px;
+    height: 100%;
+    font: normal 12px Arial;
+    overflow: auto;
+}
+
+.JS9StatusbarItem {
+    border-radius: 4px;
+    display:inline-block;
+    vertical-align:middle;
+    text-align:center;
+    white-space:nowrap;
+    background-color: #E9E9E9;
+    color: black;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    padding: 4px;
+    float: left;
+}
+
+.JS9StatusbarItem[name*="JS9Colorbar"] {
+    margin-top: 0px;
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+img.JS9StatusbarImage {
+    white-space:nowrap;
+}
+
+img.JS9StatusbarImageItem[name*="zoom_"]{
+    height: 12px;
+    width:  12px;
+}
+
+img.JS9StatusbarImageOption[name*="color_"]{
+    height: 12px;
+    width:  100px;
+}
+
+.JS9StatusbarItemNoHighlight {
+    border: 1px solid #E9E9E9;
+}
+
+.JS9StatusbarItemHighlight {
+    border: 1px solid #B0B0B0;
+}
+
+.JS9StatusbarItemHighlight2 {
+    border: 1px solid #777777
+}
+
+.JS9StatusbarPluginItem .JS9ColorbarCanvas {
+    border: 0px solid black;
+}
+
+.JS9StatusbarPluginItem {
+    vertical-align: middle;
+}
+div.JS9SyncUIContainer {
+    padding: 2px;
+}
+
+div.JS9SyncUIHeader {
+    position: relative;
+    left: 0px;
+    top: 0px;
+    background: #E9E9E9;
+    padding: 0px;
+    margin-left: 15px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 0px;
+}
+
+div.JS9SyncUIOpContainer {
+    position: relative;
+    left: 0px;
+    top: 0px;
+}
+
+div.JS9SyncUIOpRow {
+    position: relative;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 24px;
+}
+
+span.JS9SyncUIOp {
+    background: #E9E9E9;
+    overflow: auto;
+    display: relative;
+    /* calculated in the code */
+    top: 0px;
+    left: 0px;
+    margin-left: 15px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 0px;
+}
+
+div.JS9SyncUIText {
+    margin-left: 15px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    white-space: nowrap;
+}
+
+input.JS9SyncUIActiveCheck {
+    margin-left: 0px;
+}
+
+div.JS9SyncUIButtons {
+    margin-left: 0px;
+    margin-top: 30px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    padding-right: 10px;
+}
+
+span.JS9SyncUIButton {
+    margin-right: 0px;
+}
+
+div.JS9SyncUIImageContainer {
+    position: relative;
+    left: 0px;
+    top: 0px;
+    overflow: auto;
+}
+
+div.JS9SyncUIImageRow {
+    position: relative;
+    left: 0px;
+    top: 0px;
+    background: #E9E9E9;
+    margin-left: 15px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 0px;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+div.JS9SyncUIOptsContainer {
+    position: relative;
+    left: 0px;
+    top: 0px;
+}
+
+div.JS9SyncUIOptsRow {
+    position: relative;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 24px;
+}
+
+span.JS9SyncUIOpts {
+    background: #E9E9E9;
+    overflow: auto;
+    display: relative;
+    /* calculated in the code */
+    top: 0px;
+    left: 0px;
+    margin-left: 15px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 0px;
+}
+
+div.JS9SyncUIFooter {
+    border: 0px solid black;
+    background: #E9E9E9;
+    padding: 0px;
+    margin-left: 15px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 15px;
+}
+
+span.JS9SyncUINoFile {
+    margin-left: 15px;
+}
+.JS9ToolbarContainer{
+    border: 1px solid #d8e0eb;
+    border-radius: 10px;
+    background: #f8fafc;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.JS9ToolbarDiv{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 3px;
+    overflow: auto;
+    margin: 0;
+    padding: 5px 6px;
+}
+
+.JS9ToolbarButtonDiv{
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+}
+
+.JS9ToolbarImageButton{
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 5px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: transparent;
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.JS9ToolbarImageButton:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
+}
+
+.JS9ToolbarImageButton:hover {
+    border-color: #cbd5e1;
+    background: #e2e8f0;
+    transform: translateY(-1px);
+}
+
+.JS9ToolbarButtonButton{
+    vertical-align: middle;
+    border: 1px solid transparent;
+    background-color: transparent;
+    color: #334155;
+    padding: 6px 8px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 0;
+    border-radius: 7px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    cursor: pointer;
+    transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.JS9ToolbarButtonButton:hover {
+  border-color: #cbd5e1;
+  background: #e2e8f0;
+  transform: translateY(-1px);
+}
+
+.JS9ToolbarButtonButton:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
+}
+
+.JS9ToolbarTooltip{
+    position: relative;
+    z-index: 999;
+    border-radius: 8px;
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 8px 10px;
+    border: 1px solid #334155;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
+    font-family: system-ui, sans-serif;
+    font-size: 12px;
+    display: none;
+}
+
+/* Coarse pointers need room for an intentional tap.  Keep desktop density
+ * unchanged and let the toolbar scroll horizontally instead of shrinking
+ * controls below a reliable hit target. */
+@media (pointer: coarse) {
+    .JS9ToolbarDiv { flex-wrap: nowrap; gap: 6px; min-height: 54px; padding: 5px 8px; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
+    .JS9ToolbarImageButton { width: 44px; height: 44px; padding: 10px; border-radius: 10px; }
+    .JS9ToolbarButtonButton { min-height: 44px; padding: 9px 12px; font-size: 14px; border-radius: 10px; white-space: nowrap; }
+}
+.JS9PanZoomContainer {
+    padding: 5px;
+}
+
+.JS9PanZoomCol1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+}
+
+.JS9PanZoomCol2 {
+    position: absolute;
+    top: 0;
+    left:  100px;
+    width: 80px;
+}
+
+.JS9PanZoomCol3 {
+    position: absolute;
+    top: 0;
+    left:  200px;
+    width: 80px;
+}
+
+.JS9PanZoomCol4 {
+    position: absolute;
+    top: 0;
+    left:  300px;
+    width: 80px;
+}
+
+.JS9PanZoomCol5 {
+    position: absolute;
+    top: 0;
+    left:  400px;
+    width: 100px;
+}
+
+.JS9PanZoomLinegroup {
+    float: left;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 95%;
+    padding: 5px;
+    margin: 5px;
+}
+/* JS9MuV1 shared visual language for core plugin panels. */
+.JS9Plugin, .JS9PluginContainer {
+    --js9-ui-bg: #f8fafc;
+    --js9-ui-surface: #ffffff;
+    --js9-ui-border: #d8e0eb;
+    --js9-ui-text: #334155;
+    --js9-ui-muted: #64748b;
+    --js9-ui-accent: var(--js9-accent, #2563eb);
+    --js9-ui-accent-contrast: var(--js9-accent-contrast, #ffffff);
+    box-sizing: border-box;
+    color: var(--js9-ui-text);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.JS9Plugin :is(button, input, select, textarea) { font: inherit; }
+.JS9Plugin :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea) {
+    box-sizing: border-box;
+    min-height: 30px;
+    border: 1px solid var(--js9-ui-border);
+    border-radius: 6px;
+    padding: 4px 7px;
+    color: var(--js9-ui-text);
+    background: var(--js9-ui-surface);
+}
+.JS9Plugin input[type="checkbox"], .JS9Plugin input[type="radio"] { accent-color: var(--js9-ui-accent); }
+.JS9Plugin :is(button, input[type="button"], input[type="submit"], input[type="reset"]),
+.JS9PluginContainer :is(button, input[type="button"], input[type="submit"], input[type="reset"]) {
+    min-height: 30px;
+    border: 1px solid var(--js9-ui-border);
+    border-radius: 7px;
+    padding: 5px 9px;
+    color: var(--js9-ui-text);
+    background: var(--js9-ui-surface);
+    cursor: pointer;
+    transition: background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+.JS9Plugin :is(button, input[type="button"], input[type="submit"], input[type="reset"]):hover {
+    border-color: color-mix(in srgb, var(--js9-ui-accent) 38%, var(--js9-ui-border));
+    background: color-mix(in srgb, var(--js9-ui-accent) 9%, var(--js9-ui-surface));
+}
+.JS9Plugin :is(button, input, select, textarea):focus-visible {
+    outline: 2px solid var(--js9-ui-accent);
+    outline-offset: 1px;
+}
+
+:where(.JS9BlendContainer, .JS9BlinkContainer, .JS9CmapsContainer, .JS9ColorContainer, .JS9CubeContainer, .JS9DivsContainer, .JS9FiltersContainer, .JS9ImarithContainer, .JS9KeyboardContainer, .JS9LayersContainer, .JS9MefContainer, .JS9MouseTouchContainer, .JS9PanZoomContainer, .JS9ScaleContainer, .JS9SeparateContainer, .JS9SyncUIContainer) {
+    box-sizing: border-box;
+    min-height: 100%;
+    padding: 12px;
+    background: var(--js9-ui-bg);
+}
+:where(.JS9BlendHeader, .JS9BlinkHeader, .JS9CmapsHeader, .JS9DivsHeader, .JS9KeyboardHeader, .JS9LayersHeader, .JS9MouseTouchHeader, .JS9MefHeader, .JS9SeparateHeader, .JS9SyncUIHeader, .JS9FiltersHeader) {
+    margin: 0 0 10px;
+    padding: 0 0 8px;
+    border: 0;
+    border-bottom: 1px solid var(--js9-ui-border);
+    color: var(--js9-ui-text);
+    background: transparent;
+    font-size: 13px;
+    font-weight: 700;
+}
+:where(.JS9BlendImage, .JS9BlinkImage, .JS9CmapsImage, .JS9DivsDiv, .JS9LayersLayer, .JS9MefExtension, .JS9MefInput, .JS9MouseTouchText, .JS9MouseTouchAction, .JS9SyncUIImageRow) {
+    box-sizing: border-box;
+    margin: 6px 0;
+    padding: 9px;
+    border: 1px solid var(--js9-ui-border);
+    border-radius: 8px;
+    color: var(--js9-ui-text);
+    background: var(--js9-ui-surface);
+}
+:where(.JS9BlendImageActive, .JS9BlinkImageActive, .JS9CmapsImageActive, .JS9LayersLayerActive, .JS9MefExtensionActive, .JS9SeparateImageActive) {
+    padding: 8px;
+    border: 2px solid var(--js9-ui-accent);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--js9-ui-accent) 8%, var(--js9-ui-surface));
+}
+:where(.JS9BlendImageInactive, .JS9BlinkImageInactive, .JS9CmapsImageInactive, .JS9LayersLayerInactive, .JS9MefExtensionInactive, .JS9SeparateImageInactive) {
+    padding: 9px;
+    border: 1px solid var(--js9-ui-border);
+    border-radius: 8px;
+}
+:where(.JS9ColorLinegroup, .JS9CubeLinegroup, .JS9FiltersLinegroup, .JS9ImarithLinegroup, .JS9PanZoomLinegroup) {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0 0 8px;
+    padding: 8px;
+    border: 1px solid var(--js9-ui-border);
+    border-radius: 8px;
+    background: var(--js9-ui-surface);
+}
+.JS9StatusbarContainer { color: var(--js9-ui-text, #334155); background: var(--js9-ui-bg, #f8fafc); font: 12px/1.35 Inter, system-ui, sans-serif; }
+.JS9StatusbarItem { border-radius: 6px; color: var(--js9-ui-text, #334155); background: transparent; }
+.JS9StatusbarItemHighlight { border-color: color-mix(in srgb, var(--js9-ui-accent, #2563eb) 45%, var(--js9-ui-border, #d8e0eb)); background: color-mix(in srgb, var(--js9-ui-accent, #2563eb) 9%, var(--js9-ui-surface, #ffffff)); }
+.JS9StatusbarItemHighlight2 { border-color: var(--js9-ui-accent, #2563eb); }
+
+/* Region Stats follows the selected interface theme instead of forcing dark mode. */
+.JS9RegionStats {
+    --rs-bg: var(--js9-ui-bg, #f8fafc);
+    --rs-surface: var(--js9-ui-surface, #ffffff);
+    --rs-border: var(--js9-ui-border, #d8e0eb);
+    --rs-text: var(--js9-ui-text, #334155);
+    --rs-muted: var(--js9-ui-muted, #64748b);
+    box-sizing: border-box;
+    min-height: 100%;
+    padding: 14px;
+    color: var(--rs-text);
+    background: var(--rs-bg);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.JS9RegionStats header, .JS9RegionStatsMagnitude { border-color: var(--rs-border); }
+.JS9RegionStats h3, .JS9RegionStatsMetric strong { color: var(--rs-text); }
+.JS9RegionStatsEyebrow, .JS9RegionStatsBadge, .JS9RegionStatsFormula { color: var(--js9-ui-accent); }
+.JS9RegionStatsBadge { border-color: color-mix(in srgb, var(--js9-ui-accent) 42%, var(--rs-border)); }
+.JS9RegionStatsHint, .JS9RegionStatsMetric span, .JS9RegionStatsMetric small, .JS9RegionStatsCalibration label, .JS9RegionStatsCalibration label span { color: var(--rs-muted); }
+.JS9RegionStatsMetric { border-color: var(--rs-border); background: var(--rs-surface); }
+.JS9RegionStatsRate { color: var(--rs-muted); }
+.JS9RegionStatsRate strong { color: var(--rs-text); }
+.JS9RegionStatsCalibration { border-color: color-mix(in srgb, var(--js9-ui-accent) 30%, var(--rs-border)); background: color-mix(in srgb, var(--js9-ui-accent) 7%, var(--rs-surface)); }
+.JS9RegionStatsFormTitle { color: var(--rs-text); }
+.JS9RegionStatsCalibration input { border-color: var(--rs-border); color: var(--rs-text); background: var(--rs-surface); }
+.JS9RegionStatsCalibration button {
+    color: var(--js9-ui-accent-contrast, #ffffff) !important;
+    background: var(--js9-ui-accent, #2563eb) !important;
+    border: 1px solid color-mix(in srgb, var(--js9-ui-accent, #2563eb) 72%, #000000) !important;
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--js9-ui-accent, #2563eb) 35%, transparent);
+}
+
+/* The Region Stats tab strip belongs to the Edit Region dialog, not the
+ * plugin root. Keep it readable in every floating-window theme. */
+.JS9RegionDialogTabbar { background: var(--js9-ui-bg, #e2e8f0); }
+.JS9RegionDialogTab { color: var(--js9-ui-muted, #475569); }
+.JS9RegionDialogTab.active { color: var(--js9-ui-text, #334155); background: var(--js9-ui-surface, #ffffff); }
+
+/* Some older panels use JS9PluginContainer without an inner JS9Plugin. */
+.JS9PluginContainer {
+    color: var(--js9-ui-text, #334155);
+    background: var(--js9-ui-bg, #f8fafc);
+}
+.JS9PluginContainer :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea) {
+    color: var(--js9-ui-text, #334155);
+    background: var(--js9-ui-surface, #ffffff);
+    border-color: var(--js9-ui-border, #d8e0eb);
+}
+
+/* Color Controls predates the common plugin wrapper.  Its JS9Button2
+ * controls otherwise retain the legacy white button face while inheriting a
+ * themed foreground, which can result in white-on-white labels.  Give this
+ * standalone panel its own complete variable set and override the legacy
+ * button rules in every state. */
+.JS9ColorContainer {
+    --js9-ui-bg: #f8fafc;
+    --js9-ui-surface: #ffffff;
+    --js9-ui-border: #d8e0eb;
+    --js9-ui-text: #334155;
+    --js9-ui-muted: #64748b;
+    --js9-ui-accent: var(--js9-accent, #2563eb);
+    box-sizing: border-box;
+    color: var(--js9-ui-text);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.JS9ColorContainer :is(.JS9ColorButton, .JS9ColorSelect, .JS9ColorInput) {
+    color: var(--js9-ui-text) !important;
+    background: var(--js9-ui-surface) !important;
+    border-color: var(--js9-ui-border) !important;
+    text-shadow: none !important;
+}
+.JS9ColorContainer .JS9ColorButton:hover,
+.JS9ColorContainer .JS9ColorButton:focus-visible {
+    color: var(--js9-ui-text) !important;
+    background: color-mix(in srgb, var(--js9-ui-accent) 9%, var(--js9-ui-surface)) !important;
+    border-color: color-mix(in srgb, var(--js9-ui-accent) 38%, var(--js9-ui-border)) !important;
+}
+.JS9ColorContainer .JS9ColorInput::placeholder { color: var(--js9-ui-muted); opacity: 1; }
+
+:is([data-js9-theme="dark"], [data-js9-theme="midnight"], [data-js9-theme="contrast"]) .JS9ColorContainer,
+.JS9ColorContainer:is([data-js9-theme="dark"], [data-js9-theme="midnight"], [data-js9-theme="contrast"]) {
+    --js9-ui-bg: #111827;
+    --js9-ui-surface: #1f2937;
+    --js9-ui-border: #475569;
+    --js9-ui-text: #e5edf9;
+    --js9-ui-muted: #a8b5c9;
+}
+
+:is([data-js9-theme="dark"], [data-js9-theme="midnight"], [data-js9-theme="contrast"]) .JS9Plugin,
+.JS9Plugin:is([data-js9-theme="dark"], [data-js9-theme="midnight"], [data-js9-theme="contrast"]) {
+    --js9-ui-bg: #111827;
+    --js9-ui-surface: #1f2937;
+    --js9-ui-border: #475569;
+    --js9-ui-text: #e5edf9;
+    --js9-ui-muted: #a8b5c9;
+}
+
+/* Responsive structure for the traditional control panels. */
+.JS9ColorLinegroup, .JS9PanZoomLinegroup {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    align-items: center;
+    float: none;
+    position: static;
+    width: 100%;
+    height: auto;
+    margin: 0 0 8px;
+}
+.JS9ColorLinegroup > :is(.JS9ColorCol1, .JS9ColorCol2, .JS9ColorCol3, .JS9ColorCol4),
+.JS9PanZoomLinegroup > :is(.JS9PanZoomCol1, .JS9PanZoomCol2, .JS9PanZoomCol3, .JS9PanZoomCol4, .JS9PanZoomCol5) {
+    position: static;
+    left: auto;
+    top: auto;
+    width: 100%;
+    min-width: 0;
+}
+.JS9ColorLinegroup > :is(.JS9ColorButton, .JS9ColorSelect, .JS9ColorInput),
+.JS9PanZoomLinegroup > :is(.JS9PanZoomButton, .JS9PanZoomSelect, .JS9PanZoomInput) { width: 100%; }
+.JS9ColorLinegroup > .JS9ColorCol4 ~ .JS9ColorCol4 { grid-column: span 1; }
+
+.JS9ScaleControls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.JS9ScaleHelp { color: var(--js9-ui-muted); line-height: 1.5; }
+.JS9ScaleControls :is(select, input) { flex: 1 1 135px; min-width: 0; }
+.JS9ScaleChart { padding: 10px; }
+.JS9ScalePlotTitle { margin-bottom: 8px; color: var(--js9-ui-muted); font-size: 12px; font-weight: 650; text-align: center; }
+.JS9ScalePlot { max-width: 100%; }
+.JS9ScaleValues .JS9ScaleSpan { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; float: none !important; }
+.JS9ScaleValues input { max-width: 180px; }
+
+.JS9SyncUIContainer { display: flex; flex-direction: column; gap: 10px; }
+.JS9SyncUIHeader, .JS9SyncUIText { margin: 0; color: var(--js9-ui-text); background: transparent; }
+.JS9SyncUIOpContainer, .JS9SyncUIImageContainer, .JS9SyncUIOptsContainer { width: 100%; }
+.JS9SyncUIOpRow, .JS9SyncUIImageRow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 12px; width: 100%; height: auto; margin: 0; padding: 8px; }
+.JS9SyncUIOptsRow { display: flex; flex-wrap: wrap; gap: 10px 18px; width: 100%; height: auto; }
+.JS9SyncUIOpts { position: static !important; margin: 0; }
+.JS9SyncUIButtons { display: flex; justify-content: flex-end; margin: 0; padding: 10px 0 0; border-top: 1px solid var(--js9-ui-border); }
+.JS9SyncUIButtons > span { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; float: none !important; }
+
+.JS9BlendHeader, .JS9BlinkHeader, .JS9MefHeader { line-height: 1.5; }
+.JS9BlendHeader a { color: var(--js9-ui-accent); }
+.JS9MefHeader { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.JS9MefHeader span[style*="float"] { float: none !important; margin-left: auto; }
+.JS9MefEmpty { margin: 0; padding: 28px 16px; color: var(--js9-ui-muted); text-align: center; }
+
+@media (max-width: 560px) {
+    .JS9ColorLinegroup, .JS9PanZoomLinegroup { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .JS9ColorLinegroup > :is(.JS9ColorCol1, .JS9ColorCol2, .JS9ColorCol3, .JS9ColorCol4),
+    .JS9PanZoomLinegroup > :is(.JS9PanZoomCol1, .JS9PanZoomCol2, .JS9PanZoomCol3, .JS9PanZoomCol4, .JS9PanZoomCol5) { grid-column: auto; }
+    .JS9SyncUIOpRow, .JS9SyncUIImageRow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 360px) {
+    .JS9ColorLinegroup, .JS9PanZoomLinegroup, .JS9SyncUIOpRow, .JS9SyncUIImageRow { grid-template-columns: 1fr; }
+    .JS9SyncUIButtons, .JS9SyncUIButtons > span { justify-content: stretch; }
+    .JS9SyncUIButtons input { width: 100%; }
+}
+
+/* Legacy plugins upgraded to the shared panel rhythm. */
+.JS9PluginEmpty { margin: 0; padding: 28px 16px; color: var(--js9-ui-muted); text-align: center; }
+.JS9CubeLinegroup, .JS9ImarithLinegroup, .JS9SeparateSection { box-sizing: border-box; width: 100%; }
+.JS9CubeLinegroup { margin: 0 0 10px; }
+.JS9CubeHelp, .JS9ImarithHelp, .JS9SeparateDescription { margin: 0 0 10px; color: var(--js9-ui-muted); line-height: 1.5; }
+.JS9CubeControls, .JS9CubeActions, .JS9ImarithControls, .JS9ImarithActions, .JS9SeparateActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+.JS9CubeControls .JS9CubeSpan:first-child, .JS9CubeActions .JS9CubeSpan:first-child { flex: 1 1 250px; }
+.JS9CubeControls .JS9CubeSpan:last-child, .JS9CubeActions .JS9CubeSpan:last-child { flex: 0 1 auto; }
+.JS9CubeSpan { float: none !important; }
+.JS9CubeSpan > :is(input, select), .JS9ImarithControls :is(input, select), .JS9SeparateActions :is(input, select) { margin: 0 4px 0 0; }
+.JS9CubeLoad { padding-top: 2px; }
+.JS9ImarithControls .JS9ImarithSpan { display: flex; flex: 1 1 320px; flex-wrap: wrap; gap: 8px; align-items: center; float: none !important; }
+.JS9ImarithActions { justify-content: flex-end; }
+.JS9ImarithActions span { display: flex; flex-wrap: wrap; gap: 8px; float: none !important; }
+.JS9SeparateSection { padding: 12px 0; border-bottom: 1px solid var(--js9-ui-border); }
+.JS9SeparateSection:last-child { border-bottom: 0; }
+.JS9SeparateDescription { margin-top: 0; }
+.JS9SeparateActions .separateButton1, .JS9SeparateActions .separateButton2 { position: static !important; width: auto !important; }
+.JS9SeparateActions .separateLayoutSelect { margin-left: auto; }
+.JS9Plugin :is(.JS9KeyboardText, .JS9KeyboardAction, .JS9MouseTouchText, .JS9MouseTouchAction, .JS9CmapsText, .JS9CmapsAction) {
+    color: var(--js9-ui-text);
+    background: var(--js9-ui-surface);
+    border-color: var(--js9-ui-border);
+}
+.JS9FiltersLineheader { margin: 0 0 12px; color: var(--js9-ui-text); text-align: center; }
+
+@media (max-width: 420px) {
+    .JS9CubeControls .JS9CubeSpan, .JS9CubeActions .JS9CubeSpan { flex-basis: 100%; }
+    .JS9ImarithActions { justify-content: stretch; }
+    .JS9ImarithActions span, .JS9ImarithActions input { width: 100%; }
+    .JS9SeparateActions .separateLayoutSelect { margin-left: 0; flex: 1 1 100%; }
+}
